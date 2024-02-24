@@ -35,7 +35,7 @@ public class MemberEntity extends Timestamped {
   @Column(nullable = false, length = 20)
   private String nickname;
 
-  @Column(nullable = false, length = 20)
+  @Column(nullable = false)
   private String password;
 
   @Column(nullable = false)
