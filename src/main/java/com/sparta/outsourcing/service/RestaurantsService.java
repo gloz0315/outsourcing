@@ -4,6 +4,7 @@ import com.sparta.outsourcing.dto.RestaurantsRequestDto;
 import com.sparta.outsourcing.dto.RestaurantsResponseDto;
 import com.sparta.outsourcing.entity.Restaurants;
 import com.sparta.outsourcing.repository.RestaurantsRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,9 +16,9 @@ public class RestaurantsService {
   private final RestaurantsRepository restaurantsRepository;
 
   @Transactional
-  public RestaurantsResponseDto createRestaurant(RestaurantsRequestDto requestDto) {
+  public RestaurantsResponseDto createRestaurant(RestaurantsRequestDto restaurantsRequestDto) {
 
-    Restaurants restaurants = requestDto.toEntity();
+    Restaurants restaurants = restaurantsRequestDto.toEntity();
     restaurantsRepository.save(restaurants);
     RestaurantsResponseDto restaurantsResponseDto = new RestaurantsResponseDto(restaurants);
 
@@ -34,6 +35,10 @@ public class RestaurantsService {
   private Restaurants findByRestaurantId(Long restaurantId) {
     return restaurantsRepository.findById(restaurantId)
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 가게입니다"));
+  }
+
+  public List<RestaurantsResponseDto> getRestaurantList(){
+    return restaurantsRepository.findAll().stream().map(RestaurantsResponseDto::new).toList();
   }
 
 }
