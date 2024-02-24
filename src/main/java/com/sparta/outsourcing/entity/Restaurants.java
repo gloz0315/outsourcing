@@ -18,7 +18,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Entity
 @Getter
 @Table(name = "restaurants")
-@SQLDelete(sql = "update restaurant set deleted_date = NOW() where restaurant_id= ?")
+@SQLDelete(sql = "update restaurants set deleted = true,deleted_date = NOW() where restaurant_id= ?")
+// deleted_date가 null인 가게만 조회
 @NamedQuery(
     name = "Restaurants.findActiveRestaurants",
     query = "SELECT r FROM Restaurants r WHERE r.deletedDate IS NULL"
@@ -39,11 +40,16 @@ public class Restaurants {
   @Column @NotNull
   @CreatedDate
   private LocalDateTime createdDate;
-  @Column @NotNull
+  @Column
   @LastModifiedDate
   private LocalDateTime updatedDate;
 
+  @Column
   private LocalDateTime deletedDate;
+
+  @Column(nullable = false)
+  private boolean deleted = false;
+
   @Builder
   public Restaurants(String name,String category,String address,String number){
     this.name = name;
@@ -52,8 +58,8 @@ public class Restaurants {
     this.number = number;
     this.createdDate = LocalDateTime.now();
     this.updatedDate = LocalDateTime.now();
-    this.deletedDate = LocalDateTime.now();
   }
+
 
   public Restaurants() {
 
