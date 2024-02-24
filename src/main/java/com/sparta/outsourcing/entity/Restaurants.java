@@ -2,29 +2,27 @@ package com.sparta.outsourcing.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
 @Table(name = "restaurants")
 @SQLDelete(sql = "update restaurant set deleted_date = NOW() where restaurant_id= ?")
-@SQLRestriction(value = "deleted_date is NULL")
-@EntityListeners(AuditingEntityListener.class)
+@NamedQuery(
+    name = "Restaurants.findActiveRestaurants",
+    query = "SELECT r FROM Restaurants r WHERE r.deletedDate IS NULL"
+)
 public class Restaurants {
 
   @Id
