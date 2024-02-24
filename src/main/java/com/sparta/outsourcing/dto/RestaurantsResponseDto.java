@@ -2,28 +2,30 @@ package com.sparta.outsourcing.dto;
 
 import com.sparta.outsourcing.entity.Restaurants;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Getter
 public class RestaurantsResponseDto {
-  private Long restaurant_id;
+  private Long restaurantId;
   private String name;
   private String category;
   private String address;
   private String number;
-  private LocalDate created_date;
-  private LocalDate updated_date;
+  private LocalDateTime createdDate;
+  private LocalDateTime updatedDate;
+  private LocalDateTime deletedDate;
 
 
 
 
   public RestaurantsResponseDto (Restaurants restaurants) {
-    this.restaurant_id = restaurants.getResturant_id();
+    this.restaurantId = restaurants.getRestaurantId();
     this.name = restaurants.getName();
     this.category = restaurants.getCategory();
     this.address = restaurants.getAddress();
     this.number = restaurants.getNumber();
-    this.created_date = restaurants.getCreated_date();
-    this.updated_date = restaurants.getUpdated_date();
+    this.createdDate = restaurants.getCreatedDate();
+    this.updatedDate = restaurants.getUpdatedDate();
   }
 }

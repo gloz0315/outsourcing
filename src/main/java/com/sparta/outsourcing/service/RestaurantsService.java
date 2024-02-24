@@ -7,16 +7,18 @@ import com.sparta.outsourcing.repository.RestaurantsRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 @RequiredArgsConstructor
 public class RestaurantsService {
-  private final EntityManager entityManager;
+  private final RestaurantsRepository restaurantsRepository;
+  @Transactional
   public RestaurantsResponseDto createRestaurant(RestaurantsRequestDto requestDto) {
 
     Restaurants restaurants = requestDto.toEntity();
-    entityManager.persist(restaurants);
+    restaurantsRepository.save(restaurants);
     RestaurantsResponseDto responseDto = new RestaurantsResponseDto(restaurants);
 
     return responseDto;
