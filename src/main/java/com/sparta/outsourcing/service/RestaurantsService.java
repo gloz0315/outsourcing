@@ -32,24 +32,37 @@ public class RestaurantsService {
   }
 
 
-  public List<RestaurantsResponseDto> getRestaurantList(){
+  public List<RestaurantsResponseDto> getRestaurantList() {
     return restaurantsRepository.findAllByOrderByRestaurantId().stream()
         .map(RestaurantsResponseDto::new).toList();
 
   } // for each문이랑 유사
 
-
-  public long deleteRestaurant(Long restaurantId){
+  @Transactional
+  public long deleteRestaurant(Long restaurantId) {
     deleteByRestaurantId(restaurantId);
     return restaurantId;
   }
 
-  private long deleteByRestaurantId(Long restaurantId){
+  @Transactional
+  public RestaurantsResponseDto updateRestaurant(Long restaurantId,
+      RestaurantsRequestDto restaurantsRequestDto) {
+    Restaurants restaurants = findByRestaurantId(restaurantId);
+    restaurants.update(restaurantsRequestDto);
+    Restaurants updatedRestaurant = restaurantsRepository.save(restaurants);
+    RestaurantsResponseDto restaurantsResponseDto = new RestaurantsResponseDto(updatedRestaurant);
+    return restaurantsResponseDto;
+  }
+
+  private long deleteByRestaurantId(Long restaurantId) {
     restaurantsRepository.deleteById(restaurantId);
     return restaurantId;
   }
+
   private Restaurants findByRestaurantId(Long restaurantId) {
     return restaurantsRepository.findById(restaurantId)
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 가게입니다"));
   }
+
+
 }

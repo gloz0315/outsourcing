@@ -1,5 +1,6 @@
 package com.sparta.outsourcing.entity;
 
+import com.sparta.outsourcing.dto.RestaurantsRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -41,10 +42,10 @@ public class Restaurants {
   @CreatedDate
   private LocalDateTime createdDate;
   @Column
-  @LastModifiedDate
   private LocalDateTime updatedDate;
 
   @Column
+  @LastModifiedDate
   private LocalDateTime deletedDate;
 
   @Column(nullable = false)
@@ -57,11 +58,17 @@ public class Restaurants {
     this.address = address;
     this.number = number;
     this.createdDate = LocalDateTime.now();
-    this.updatedDate = LocalDateTime.now();
   }
 
 
-  public Restaurants() {
+  public void update(RestaurantsRequestDto restaurants) {
+    this.name = restaurants.getName();
+    this.category = restaurants.getCategory();
+    this.address = restaurants.getAddress();
+    this.number = restaurants.getNumber();
+    this.updatedDate = LocalDateTime.now();
+  }
+  public Restaurants(){
 
   }
 }
