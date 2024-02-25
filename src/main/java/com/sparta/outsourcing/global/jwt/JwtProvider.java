@@ -43,8 +43,8 @@ public class JwtProvider {
     key = Keys.hmacShaKeyFor(bytes);
   }
 
-  public String generateAccessToken(final String membername, final String role) {
-    return generateToken(membername, role, ACCESS_TOKEN_VALID_TIME);
+  public String generateAccessToken(final Long memberId, final String role) {
+    return generateToken(String.valueOf(memberId), role, ACCESS_TOKEN_VALID_TIME);
   }
 
   public String generateToken(final String info, final String role, Long time) {
