@@ -1,10 +1,10 @@
 package com.sparta.outsourcing.domain.member.repository;
 
-import com.sparta.outsourcing.domain.member.model.entity.MemberEntity;
-import java.util.Optional;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.sparta.outsourcing.domain.member.service.dto.MemberSignupDto;
 
-public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
+public interface MemberRepository {
 
-  Optional<MemberEntity> findByEmail(String email);
+  void signIn(MemberSignupDto dto);
+
+  boolean checkEmail(String email);
 }
