@@ -1,7 +1,11 @@
 package com.sparta.outsourcing.global.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.outsourcing.global.dto.CommonResponseDto;
 import com.sparta.outsourcing.global.jwt.JwtProvider;
 import com.sparta.outsourcing.global.jwt.TokenState;
+import com.sparta.outsourcing.global.jwt.entity.RefreshTokenEntity;
+import com.sparta.outsourcing.global.jwt.repository.TokenRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,17 +29,59 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
   private final JwtProvider jwtProvider;
+  private final TokenRepository tokenRepository;
   private final UserDetailsServiceImpl userDetailsService;
+
+  ObjectMapper objectMapper = new ObjectMapper();
 
   @Override
   protected void doFilterInternal(
-      HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
+      HttpServletRequest req, HttpServletResponse res, FilterChain filterChain)
+      throws ServletException, IOException {
 
     String tokenValue = jwtProvider.getAccessTokenFromRequest(req);
 
     if (StringUtils.hasText(tokenValue)) {
+      TokenState state = jwtProvider.validateToken(tokenValue);
 
-      if (jwtProvider.validateToken(tokenValue) != TokenState.VALID) {
+      if (state.equals(TokenState.EXPIRED)) {
+        try {
+          Claims info = jwtProvider.getMemberInfoFromExpiredToken(tokenValue);
+          UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(
+              info.getSubject());
+          RefreshTokenEntity refreshToken = tokenRepository.findByMemberId(
+              userDetails.getUser().getId());
+
+          TokenState refreshState = jwtProvider.validateToken(refreshToken.getToken());
+
+          if(refreshState.equals(TokenState.VALID)) {
+            String newAccessToken = jwtProvider.generateRefreshToken(userDetails.getUsername(), "User");
+            res.addHeader(JwtProvider.AUTHORIZATION_ACCESS_TOKEN_HEADER_KEY, newAccessToken);
+            res.setStatus(HttpServletResponse.SC_OK);
+            String jsonResponse = objectMapper.writeValueAsString(
+                CommonResponseDto.ok("새로운 토큰이 발급되었습니다.", null));
+
+            res.setContentType("application/json");
+            res.setCharacterEncoding("UTF-8");
+            res.getWriter().write(jsonResponse);
+            return;
+          } else {
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+            String jsonResponse = objectMapper.writeValueAsString(
+                CommonResponseDto.unauthorizedRequest("모든 토큰이 만료되었습니다."));
+            tokenRepository.deleteToken(refreshToken);
+
+            res.setContentType("application/json");
+            res.setCharacterEncoding("UTF-8");
+            res.getWriter().write(jsonResponse);
+            return;
+          }
+        } catch (Exception e) {
+          log.error(e.getMessage());
+          return;
+        }
+      } else if(state.equals(TokenState.INVALID)) {
         log.error("Token Error");
         return;
       }

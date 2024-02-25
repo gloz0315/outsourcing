@@ -1,7 +1,9 @@
 package com.sparta.outsourcing.domain.member.repository;
 
+import com.sparta.outsourcing.domain.member.model.Member;
 import com.sparta.outsourcing.domain.member.model.entity.MemberEntity;
 import com.sparta.outsourcing.domain.member.service.dto.MemberSignupDto;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
@@ -23,5 +25,12 @@ public class MemberRepositoryImpl implements MemberRepository {
   @Override
   public boolean checkEmail(String email) {
     return memberJpaRepository.findByEmail(email).isPresent();
+  }
+
+  @Override
+  public Member findMemberOrElseThrow(String email) {
+    return memberJpaRepository.findByEmail(email).orElseThrow(
+        EntityNotFoundException::new
+    ).toModel();
   }
 }

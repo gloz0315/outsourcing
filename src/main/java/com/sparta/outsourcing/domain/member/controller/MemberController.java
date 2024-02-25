@@ -6,6 +6,8 @@ import com.sparta.outsourcing.domain.member.service.MemberService;
 import com.sparta.outsourcing.global.dto.CommonResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,4 +28,13 @@ public class MemberController {
     MemberResponseDto responseDto = memberService.signup(dto);
     return CommonResponseDto.ok("회원가입에 성공하셨습니다.", responseDto);
   }
+
+  @PostMapping("/logout")
+  public ResponseEntity<CommonResponseDto<String>> logout(
+      @AuthenticationPrincipal UserDetails userDetails
+  ) {
+    memberService.logout(userDetails);
+    return CommonResponseDto.ok("로그아웃에 성공하였습니다.", null);
+  }
+
 }

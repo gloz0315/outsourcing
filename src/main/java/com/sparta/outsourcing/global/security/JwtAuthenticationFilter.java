@@ -5,6 +5,7 @@ import com.sparta.outsourcing.domain.member.controller.dto.LoginRequestDto;
 import com.sparta.outsourcing.domain.member.model.Member;
 import com.sparta.outsourcing.global.dto.CommonResponseDto;
 import com.sparta.outsourcing.global.jwt.JwtProvider;
+import com.sparta.outsourcing.global.jwt.repository.TokenRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,10 +21,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
   private final JwtProvider jwtProvider;
+  private final TokenRepository tokenRepository;
   ObjectMapper objectMapper = new ObjectMapper();
 
-  public JwtAuthenticationFilter(JwtProvider jwtProvider) {
+  public JwtAuthenticationFilter(JwtProvider jwtProvider, TokenRepository tokenRepository) {
     this.jwtProvider = jwtProvider;
+    this.tokenRepository = tokenRepository;
     setFilterProcessesUrl("/api/members/login");
   }
 
@@ -52,7 +55,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
       FilterChain chain, Authentication authResult) throws IOException {
     Member member = ((UserDetailsImpl) authResult.getPrincipal()).getUser();
 
-    String token = jwtProvider.generateAccessToken(member.getId(), "User");
+    String token = jwtProvider.generateAccessToken(member.getEmail(), "User");
+    String refreshToken = jwtProvider.generateRefreshToken(member.getEmail(), "User");
+    tokenRepository.register(member.getId(), refreshToken);
     response.addHeader(JwtProvider.AUTHORIZATION_ACCESS_TOKEN_HEADER_KEY, token);
     response.setStatus(HttpServletResponse.SC_OK);
 

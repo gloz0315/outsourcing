@@ -1,6 +1,7 @@
 package com.sparta.outsourcing.global.config;
 
 import com.sparta.outsourcing.global.jwt.JwtProvider;
+import com.sparta.outsourcing.global.jwt.repository.TokenRepository;
 import com.sparta.outsourcing.global.security.JwtAuthenticationFilter;
 import com.sparta.outsourcing.global.security.JwtAuthorizationFilter;
 import com.sparta.outsourcing.global.security.UserDetailsServiceImpl;
@@ -24,6 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
   private final JwtProvider jwtProvider;
+  private final TokenRepository tokenRepository;
   private final UserDetailsServiceImpl userDetailsService;
   private final AuthenticationConfiguration authenticationConfiguration;
 
@@ -40,14 +42,14 @@ public class SecurityConfig {
 
   @Bean
   public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-    JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtProvider);
+    JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtProvider, tokenRepository);
     filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
     return filter;
   }
 
   @Bean
   public JwtAuthorizationFilter jwtAuthorizationFilter() {
-    return new JwtAuthorizationFilter(jwtProvider, userDetailsService);
+    return new JwtAuthorizationFilter(jwtProvider, tokenRepository, userDetailsService);
   }
 
   @Bean
@@ -60,10 +62,12 @@ public class SecurityConfig {
 
     http.authorizeHttpRequests((authorizeHttpRequests) ->
         authorizeHttpRequests
-            .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
+            .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+            .permitAll() // resources 접근 허용 설정
             .requestMatchers("/").permitAll() // 메인 페이지 요청 허가
             .requestMatchers("/api/members/signup").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
             .requestMatchers("/api/members/login").permitAll()
+            .requestMatchers("/api/members/logout").permitAll()
             .anyRequest().authenticated() // 그 외 모든 요청 인증처리
     );
 

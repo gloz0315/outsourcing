@@ -1,15 +1,13 @@
 package com.sparta.outsourcing.global.jwt.repository;
 
-import static com.sparta.outsourcing.global.exception.JwtError.INVALID_TOKEN;
-
-import com.sparta.outsourcing.global.exception.CustomJwtException;
 import com.sparta.outsourcing.global.jwt.entity.RefreshTokenEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class TokenRepositoryImpl implements TokenRepository{
+public class TokenRepositoryImpl implements TokenRepository {
+
   private final RefreshTokenJpaRepository refreshTokenJpaRepository;
 
   @Override
@@ -19,20 +17,12 @@ public class TokenRepositoryImpl implements TokenRepository{
   }
 
   @Override
-  public Long findMemberIdByToken(String token) {
-    RefreshTokenEntity entity = refreshTokenJpaRepository.findByToken(token)
-        .orElseThrow(
-            () -> new CustomJwtException(INVALID_TOKEN));
-    return entity.getMemberId();
+  public RefreshTokenEntity findByMemberId(Long memberId) {
+    return refreshTokenJpaRepository.findByMemberId(memberId);
   }
 
   @Override
-  public void deleteByMemberId(Long memberId) {
-    refreshTokenJpaRepository.deleteByMemberId(memberId);
-  }
-
-  @Override
-  public void deleteToken(String token) {
-    refreshTokenJpaRepository.deleteByToken(token);
+  public void deleteToken(RefreshTokenEntity token) {
+    refreshTokenJpaRepository.deleteByToken(token.getToken());
   }
 }

@@ -27,11 +27,12 @@ import org.springframework.util.StringUtils;
 public class JwtProvider {
 
   public static final String AUTHORIZATION_ACCESS_TOKEN_HEADER_KEY = "Authorization";
-  private static final Integer BEARER_PREFIX_LENGTH = 7;
   private static final String AUTHORIZATION_KEY = "Auth";
   private static final String BEARER_PREFIX = "Bearer ";
+  private static final Integer BEARER_PREFIX_LENGTH = 7;
   private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
   private static final Long ACCESS_TOKEN_VALID_TIME = (60 * 1000L) * 30;
+  private static final Long REFRESH_TOKEN_VALID_TIME = (60 * 1000L) * 60 * 24 * 7;
 
   @Value("${jwt.secret.key}")
   private String secretKey;
@@ -43,8 +44,12 @@ public class JwtProvider {
     key = Keys.hmacShaKeyFor(bytes);
   }
 
-  public String generateAccessToken(final Long memberId, final String role) {
-    return generateToken(String.valueOf(memberId), role, ACCESS_TOKEN_VALID_TIME);
+  public String generateAccessToken(final String name, final String role) {
+    return generateToken(name, role, ACCESS_TOKEN_VALID_TIME);
+  }
+
+  public String generateRefreshToken(final String name, final String role) {
+    return generateRefreshToken(name, role, REFRESH_TOKEN_VALID_TIME);
   }
 
   public String generateToken(final String info, final String role, Long time) {
@@ -59,11 +64,19 @@ public class JwtProvider {
             .compact();
   }
 
-  public String getAccessTokenFromRequest(final HttpServletRequest request) {
-    return getTokenFromRequest(request);
+  public String generateRefreshToken(final String info, final String role, Long time) {
+    Date now = new Date();
+    return BEARER_PREFIX +
+        Jwts.builder()
+            .setSubject(info)
+            .claim(AUTHORIZATION_KEY, role)
+            .setExpiration(new Date(now.getTime() + time))
+            .setIssuedAt(now)
+            .signWith(key, SIGNATURE_ALGORITHM)
+            .compact();
   }
 
-  public String getRefreshTokenFromRequest(final HttpServletRequest request) {
+  public String getAccessTokenFromRequest(final HttpServletRequest request) {
     return getTokenFromRequest(request);
   }
 
@@ -107,5 +120,14 @@ public class JwtProvider {
 
   public Claims getMemberInfoFromToken(String token) {
     return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+  }
+
+  // 만료된 토큰으로부터 정보를 가져오기
+  public Claims getMemberInfoFromExpiredToken(String token) {
+    try {
+      return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    } catch (ExpiredJwtException e) {
+      return e.getClaims();
+    }
   }
 }
