@@ -1,9 +1,9 @@
-package com.sparta.outsourcing.service;
+package com.sparta.outsourcing.restaurant.service;
 
-import com.sparta.outsourcing.dto.RestaurantsRequestDto;
-import com.sparta.outsourcing.dto.RestaurantsResponseDto;
-import com.sparta.outsourcing.entity.Restaurants;
-import com.sparta.outsourcing.repository.RestaurantsRepository;
+import com.sparta.outsourcing.restaurant.dto.RestaurantsRequestDto;
+import com.sparta.outsourcing.restaurant.dto.RestaurantsResponseDto;
+import com.sparta.outsourcing.restaurant.entity.Restaurants;
+import com.sparta.outsourcing.restaurant.repository.RestaurantsRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -63,6 +63,4 @@ public class RestaurantsService {
     return restaurantsRepository.findById(restaurantId)
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 가게입니다"));
   }
-
-
 }

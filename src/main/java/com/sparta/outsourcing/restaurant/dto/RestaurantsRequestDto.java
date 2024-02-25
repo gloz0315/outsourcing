@@ -1,6 +1,6 @@
-package com.sparta.outsourcing.dto;
+package com.sparta.outsourcing.restaurant.dto;
 
-import com.sparta.outsourcing.entity.Restaurants;
+import com.sparta.outsourcing.restaurant.entity.Restaurants;
 import lombok.Builder;
 import lombok.Getter;
 

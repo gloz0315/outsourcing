@@ -1,10 +1,10 @@
-package com.sparta.outsourcing.controller;
+package com.sparta.outsourcing.restaurant.controller;
 
 
-import com.sparta.outsourcing.dto.RestaurantsRequestDto;
-import com.sparta.outsourcing.dto.RestaurantsResponseDto;
-import com.sparta.outsourcing.entity.CommonResponse;
-import com.sparta.outsourcing.service.RestaurantsService;
+import com.sparta.outsourcing.restaurant.dto.RestaurantsRequestDto;
+import com.sparta.outsourcing.restaurant.dto.RestaurantsResponseDto;
+import com.sparta.outsourcing.restaurant.entity.CommonResponse;
+import com.sparta.outsourcing.restaurant.service.RestaurantsService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -76,5 +76,4 @@ public class RestaurantsController {
         CommonResponse.<String>builder().code(HttpStatus.OK.value())
             .message("가게 삭제가 완료되었습니다").build());
   }
-
 }

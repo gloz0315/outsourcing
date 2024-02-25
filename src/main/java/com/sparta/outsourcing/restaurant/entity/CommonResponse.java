@@ -1,4 +1,4 @@
-package com.sparta.outsourcing.entity;
+package com.sparta.outsourcing.restaurant.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
