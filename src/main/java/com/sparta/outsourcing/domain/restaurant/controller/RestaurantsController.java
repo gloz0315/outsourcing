@@ -1,10 +1,10 @@
-package com.sparta.outsourcing.restaurant.controller;
+package com.sparta.outsourcing.domain.restaurant.controller;
 
 
-import com.sparta.outsourcing.restaurant.dto.RestaurantsRequestDto;
-import com.sparta.outsourcing.restaurant.dto.RestaurantsResponseDto;
-import com.sparta.outsourcing.restaurant.entity.CommonResponse;
-import com.sparta.outsourcing.restaurant.service.RestaurantsService;
+import com.sparta.outsourcing.domain.restaurant.dto.RestaurantsRequestDto;
+import com.sparta.outsourcing.domain.restaurant.dto.RestaurantsResponseDto;
+import com.sparta.outsourcing.domain.restaurant.entity.CommonResponse;
+import com.sparta.outsourcing.domain.restaurant.service.RestaurantsService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

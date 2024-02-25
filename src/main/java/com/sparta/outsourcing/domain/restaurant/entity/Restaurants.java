@@ -1,6 +1,6 @@
-package com.sparta.outsourcing.restaurant.entity;
+package com.sparta.outsourcing.domain.restaurant.entity;
 
-import com.sparta.outsourcing.restaurant.dto.RestaurantsRequestDto;
+import com.sparta.outsourcing.domain.restaurant.dto.RestaurantsRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

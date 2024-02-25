@@ -1,9 +1,9 @@
-package com.sparta.outsourcing.restaurant.service;
+package com.sparta.outsourcing.domain.restaurant.service;
 
-import com.sparta.outsourcing.restaurant.dto.RestaurantsRequestDto;
-import com.sparta.outsourcing.restaurant.dto.RestaurantsResponseDto;
-import com.sparta.outsourcing.restaurant.entity.Restaurants;
-import com.sparta.outsourcing.restaurant.repository.RestaurantsRepository;
+import com.sparta.outsourcing.domain.restaurant.dto.RestaurantsRequestDto;
+import com.sparta.outsourcing.domain.restaurant.dto.RestaurantsResponseDto;
+import com.sparta.outsourcing.domain.restaurant.entity.Restaurants;
+import com.sparta.outsourcing.domain.restaurant.repository.RestaurantsRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

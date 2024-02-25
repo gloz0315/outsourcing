@@ -1,6 +1,6 @@
-package com.sparta.outsourcing.restaurant.dto;
+package com.sparta.outsourcing.domain.restaurant.dto;
 
-import com.sparta.outsourcing.restaurant.entity.Restaurants;
+import com.sparta.outsourcing.domain.restaurant.entity.Restaurants;
 import java.time.LocalDateTime;
 import lombok.Getter;
 

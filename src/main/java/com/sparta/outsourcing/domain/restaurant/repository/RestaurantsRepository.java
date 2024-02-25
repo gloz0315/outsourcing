@@ -1,6 +1,6 @@
-package com.sparta.outsourcing.restaurant.repository;
+package com.sparta.outsourcing.domain.restaurant.repository;
 
-import com.sparta.outsourcing.restaurant.entity.Restaurants;
+import com.sparta.outsourcing.domain.restaurant.entity.Restaurants;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
