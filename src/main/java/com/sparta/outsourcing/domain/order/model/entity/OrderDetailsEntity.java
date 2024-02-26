@@ -1,6 +1,5 @@
 package com.sparta.outsourcing.domain.order.model.entity;
 
-import com.sparta.outsourcing.domain.common.entity.Timestamped;
 import com.sparta.outsourcing.domain.order.model.OrderDetails;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,6 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Getter
@@ -19,7 +20,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Table(name = "orderDetails")
-public class OrderDetailsEntity extends Timestamped {
+@SQLDelete(sql = "update order_details set deleted_date = NOW() where id = ?")
+@SQLRestriction(value = "deleted_date is NULL")
+public class OrderDetailsEntity extends OrderTimestamped {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

@@ -10,14 +10,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Getter
@@ -27,7 +25,7 @@ import org.springframework.data.annotation.CreatedDate;
 @SQLDelete(sql = "update orders set deleted_date = NOW() where id = ?")
 @SQLRestriction(value = "deleted_date is NULL or order_status = 'Delivery Completed'")
 @Table(name = "orders")
-public class OrderEntity {
+public class OrderEntity extends OrderTimestamped {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,12 +40,6 @@ public class OrderEntity {
   @Column(nullable = false, length = 50)
   @Enumerated(EnumType.STRING)
   private OrderType orderStatus;
-
-  @CreatedDate
-  @Column(updatable = false)
-  private LocalDateTime orderedDate;
-
-  private LocalDateTime deletedDate;
 
   public static OrderEntity of(Long memberId, Long restaurantId, OrderType orderStatus) {
 
@@ -66,5 +58,9 @@ public class OrderEntity {
         .restaurantId(restaurantId)
         .orderStatus(orderStatus)
         .build();
+  }
+
+  public void updateCancel() {
+    this.orderStatus = OrderType.CANCEL;
   }
 }
