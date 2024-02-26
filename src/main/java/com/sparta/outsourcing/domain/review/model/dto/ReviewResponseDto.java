@@ -2,9 +2,11 @@ package com.sparta.outsourcing.domain.review.model.dto;
 
 import com.sparta.outsourcing.domain.review.model.entity.Review;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 public class ReviewResponseDto {
@@ -17,17 +19,6 @@ public class ReviewResponseDto {
   private LocalDateTime createdDate;
   private LocalDateTime updatedDate;
 
-  public ReviewResponseDto(Long id, String contents, int score, Long memberEntityId,
-      Long restaurantId, LocalDateTime createdDate, LocalDateTime updatedDate) {
-    this.id = id;
-    this.contents = contents;
-    this.score = score;
-    this.memberEntityId = memberEntityId;
-    this.restaurantId = restaurantId;
-    this.createdDate = createdDate;
-    this.updatedDate = updatedDate;
-  }
-
   public ReviewResponseDto(Review review) {
     this.id = review.getId();
     this.contents = review.getContents();
@@ -37,4 +28,7 @@ public class ReviewResponseDto {
     this.createdDate = review.getCreatedDate();
     this.updatedDate = review.getUpdatedDate();
   }
+
+
+
 }

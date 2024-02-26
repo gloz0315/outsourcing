@@ -53,10 +53,10 @@ public class ReviewService {
         review.getUpdatedDate());
   }
 
-  public List<ReviewResponseDto> findReviews(Long memberId, Long restaurantId) {
+  public List<ReviewResponseDto> findReviews(Long memberEntityId, Long restaurantId) {
     List<Review> reviews;
-    if (memberId != null && restaurantId != null) {
-      reviews = reviewRepository.findByMemberEntityIdAndRestaurantId(memberId, restaurantId);
+    if (memberEntityId != null && restaurantId != null) {
+      reviews = reviewRepository.findByMemberEntityIdAndRestaurantId(memberEntityId, restaurantId);
     } else {
       reviews = reviewRepository.findAll();
     }

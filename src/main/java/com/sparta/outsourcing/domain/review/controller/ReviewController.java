@@ -38,9 +38,9 @@ public class ReviewController {
 
   @GetMapping
   public ResponseEntity<List<ReviewResponseDto>> findReviews(
-      @RequestParam Long memberId,
+      @RequestParam Long memberEntityId,
       @RequestParam Long restaurantId) {
-    List<ReviewResponseDto> reviews = reviewService.findReviews(memberId, restaurantId);
+    List<ReviewResponseDto> reviews = reviewService.findReviews(memberEntityId, restaurantId);
     return ResponseEntity.ok(reviews);
   }
 
