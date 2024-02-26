@@ -1,0 +1,70 @@
+package com.sparta.outsourcing.domain.order.model.entity;
+
+import com.sparta.outsourcing.domain.order.model.Order;
+import com.sparta.outsourcing.domain.order.model.OrderType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.springframework.data.annotation.CreatedDate;
+
+@Entity
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@SQLDelete(sql = "update orders set deleted_date = NOW() where id = ?")
+@SQLRestriction(value = "deleted_date is NULL or order_status = 'Delivery Completed'")
+@Table(name = "orders")
+public class OrderEntity {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+  @Column(nullable = false)
+  private Long memberId;
+
+  @Column(nullable = false)
+  private Long restaurantId;
+
+  @Column(nullable = false, length = 50)
+  @Enumerated(EnumType.STRING)
+  private OrderType orderStatus;
+
+  @CreatedDate
+  @Column(updatable = false)
+  private LocalDateTime orderedDate;
+
+  private LocalDateTime deletedDate;
+
+  public static OrderEntity of(Long memberId, Long restaurantId, OrderType orderStatus) {
+
+    return OrderEntity.builder()
+        .memberId(memberId)
+        .restaurantId(restaurantId)
+        .orderStatus(orderStatus)
+        .build();
+  }
+
+  public Order toModel() {
+
+    return Order.builder()
+        .id(id)
+        .memberId(memberId)
+        .restaurantId(restaurantId)
+        .orderStatus(orderStatus)
+        .build();
+  }
+}
