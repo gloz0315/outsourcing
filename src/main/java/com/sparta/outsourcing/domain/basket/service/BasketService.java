@@ -8,6 +8,7 @@ import com.sparta.outsourcing.domain.member.model.Member;
 import com.sparta.outsourcing.domain.member.repository.MemberRepository;
 import com.sparta.outsourcing.domain.restaurant.repository.RestaurantsRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -44,5 +45,23 @@ public class BasketService {
         .restaurantId(basket.getRestaurantId())
         .count(basket.getCount())
         .build();
+  }
+
+  public List<BasketResponseDto> getBasketInfo(UserDetails userDetails) {
+    Member member = memberRepository.findMemberOrElseThrow(userDetails.getUsername());
+
+    List<Basket> basketList = basketRepository.basketInfo(member.getId());
+
+    if(basketList.isEmpty()) {
+      return null;
+    }
+
+    return basketList.stream().map(
+        basket -> BasketResponseDto.builder()
+            .restaurantId(basket.getRestaurantId())
+            .menuId(basket.getMenuId())
+            .count(basket.getCount())
+            .build()
+    ).toList();
   }
 }

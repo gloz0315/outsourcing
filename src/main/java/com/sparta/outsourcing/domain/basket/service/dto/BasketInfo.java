@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class BasketInfo {
+
   private Long memberId;
   private Long restaurantId;
   private Long menuId;
