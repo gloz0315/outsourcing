@@ -3,6 +3,7 @@ package com.sparta.outsourcing.domain.member.controller;
 import com.sparta.outsourcing.domain.member.controller.dto.SignupRequestDto;
 import com.sparta.outsourcing.domain.member.controller.dto.UpdateRequestDto;
 import com.sparta.outsourcing.domain.member.service.MemberService;
+import com.sparta.outsourcing.domain.member.service.dto.MemberInfoResponse;
 import com.sparta.outsourcing.domain.member.service.dto.MemberResponseDto;
 import com.sparta.outsourcing.global.dto.CommonResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -43,11 +44,11 @@ public class MemberController {
   }
 
   @GetMapping("/{memberId}")
-  public ResponseEntity<CommonResponseDto<Void>> memberInfo(
+  public ResponseEntity<CommonResponseDto<MemberInfoResponse>> memberInfo(
       @PathVariable("memberId") Long memberId
   ) {
-    memberService.memberInfo(memberId);
-    return CommonResponseDto.ok("조회에 성공하였습니다.", null);
+    MemberInfoResponse response = memberService.memberInfo(memberId);
+    return CommonResponseDto.ok("조회에 성공하였습니다.", response);
   }
 
   @PutMapping("/{memberId}")
