@@ -1,6 +1,7 @@
 package com.sparta.outsourcing.global.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.outsourcing.domain.member.model.MemberRole;
 import com.sparta.outsourcing.global.dto.CommonResponseDto;
 import com.sparta.outsourcing.global.jwt.JwtProvider;
 import com.sparta.outsourcing.global.jwt.TokenState;
@@ -55,7 +56,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
           TokenState refreshState = jwtProvider.validateToken(refreshToken.getToken());
 
           if(refreshState.equals(TokenState.VALID)) {
-            String newAccessToken = jwtProvider.generateRefreshToken(userDetails.getUsername(), "User");
+            String newAccessToken = jwtProvider.generateRefreshToken(userDetails.getUsername(), MemberRole.USER);
             res.addHeader(JwtProvider.AUTHORIZATION_ACCESS_TOKEN_HEADER_KEY, newAccessToken);
             res.setStatus(HttpServletResponse.SC_OK);
             String jsonResponse = objectMapper.writeValueAsString(
