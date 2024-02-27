@@ -34,7 +34,6 @@ public class ReviewController {
     return ResponseEntity.ok(reviewResponseDto);
   }
 
-  // Assuming findReviews is adjusted to fetch reviews based on authenticated user or restaurantId
   @GetMapping
   public ResponseEntity<List<ReviewResponseDto>> findReviews(
       @RequestParam(required = false) Long restaurantId,
