@@ -9,11 +9,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
-  Optional<Favorite> findByMemberIdAndRestaurantId(Long memberId, Long restaurantId);
 
   List<Favorite> findAllByMemberId(Long memberId);
 
-  List<Favorite> findByRestaurantIdAndMemberId(Long restaurantId, Long memberId);
+  Optional<Favorite> findByRestaurantIdAndMemberId(Long restaurantId, Long memberId);
 
+  boolean existsByMemberIdAndRestaurantId(Long id, Long restaurantId);
 }
 

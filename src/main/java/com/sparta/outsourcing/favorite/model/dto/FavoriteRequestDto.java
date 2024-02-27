@@ -11,7 +11,6 @@ import lombok.Setter;
 @Setter
 public class FavoriteRequestDto {
 
-  private Long memberId;
   private Long restaurantId;
 
 }
