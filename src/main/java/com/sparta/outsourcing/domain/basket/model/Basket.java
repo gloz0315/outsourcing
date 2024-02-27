@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Basket {
+
   private Long memberId;
   private Long restaurantId;
   private Long menuId;
