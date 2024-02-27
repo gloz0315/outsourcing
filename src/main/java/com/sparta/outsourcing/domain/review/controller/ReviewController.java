@@ -1,17 +1,14 @@
 package com.sparta.outsourcing.domain.review.controller;
 
-import com.sparta.outsourcing.domain.restaurant.dto.RestaurantsRequestDto;
-import com.sparta.outsourcing.domain.restaurant.dto.RestaurantsResponseDto;
-import com.sparta.outsourcing.domain.restaurant.entity.CommonResponse;
 import com.sparta.outsourcing.domain.review.model.dto.ReviewRequestDto;
 import com.sparta.outsourcing.domain.review.model.dto.ReviewResponseDto;
-import com.sparta.outsourcing.domain.review.model.entity.Review;
 import com.sparta.outsourcing.domain.review.service.ReviewService;
-import jakarta.persistence.Id;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,45 +28,47 @@ public class ReviewController {
 
 
   @PostMapping
-  public ResponseEntity<ReviewResponseDto> createReview(@RequestBody ReviewRequestDto requestDto) {
-    ReviewResponseDto reviewResponseDto = reviewService.createReview(requestDto);
+  public ResponseEntity<ReviewResponseDto> createReview(@RequestBody ReviewRequestDto requestDto,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    ReviewResponseDto reviewResponseDto = reviewService.createReview(requestDto, userDetails);
     return ResponseEntity.ok(reviewResponseDto);
   }
 
+  // Assuming findReviews is adjusted to fetch reviews based on authenticated user or restaurantId
   @GetMapping
   public ResponseEntity<List<ReviewResponseDto>> findReviews(
-      @RequestParam Long memberEntityId,
-      @RequestParam Long restaurantId) {
-    List<ReviewResponseDto> reviews = reviewService.findReviews(memberEntityId, restaurantId);
+      @RequestParam(required = false) Long restaurantId,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    List<ReviewResponseDto> reviews = reviewService.findReviews(userDetails, restaurantId);
     return ResponseEntity.ok(reviews);
   }
 
-
   @GetMapping("/{id}")
-  public ResponseEntity<ReviewResponseDto> findReviewById(@PathVariable Long id) {
-    ReviewResponseDto reviewResponseDto = reviewService.findReviewById(id);
+  public ResponseEntity<ReviewResponseDto> findReviewById(@PathVariable Long id,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    ReviewResponseDto reviewResponseDto = reviewService.findReviewById(id, userDetails);
     return ResponseEntity.ok(reviewResponseDto);
   }
 
-  @PutMapping("/{id}")
-  public ResponseEntity<ReviewResponseDto> updateReview(
-      @PathVariable Long id,
-      @RequestParam Long memberEntityId,
-      @RequestParam Long restaurantId,
-      @RequestBody ReviewRequestDto requestDto) {
+  @GetMapping("/user")
+  public ResponseEntity<List<ReviewResponseDto>> findAllReviewsByUser(
+      @AuthenticationPrincipal UserDetails userDetails) {
+    List<ReviewResponseDto> reviews = reviewService.findAllReviewsByUser(userDetails);
+    return ResponseEntity.ok(reviews);
+  }
 
-    ReviewResponseDto updatedReview = reviewService.updateReview(id, memberEntityId, restaurantId,
-        requestDto);
+  @PutMapping("/{id}")
+  public ResponseEntity<ReviewResponseDto> updateReview(@PathVariable Long id,
+      @RequestBody ReviewRequestDto requestDto,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    ReviewResponseDto updatedReview = reviewService.updateReview(id, requestDto, userDetails);
     return ResponseEntity.ok(updatedReview);
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteReview(
-      @PathVariable Long id,
-      @RequestParam Long memberEntityId,
-      @RequestParam Long restaurantId) {
-
-    reviewService.deleteReview(id, memberEntityId, restaurantId);
+  public ResponseEntity<Void> deleteReview(@PathVariable Long id,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    reviewService.deleteReview(id, userDetails);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 }
