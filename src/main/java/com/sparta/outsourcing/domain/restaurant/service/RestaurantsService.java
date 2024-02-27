@@ -5,6 +5,7 @@ import com.sparta.outsourcing.domain.restaurant.dto.RestaurantsResponseDto;
 import com.sparta.outsourcing.domain.restaurant.entity.Restaurants;
 import com.sparta.outsourcing.domain.restaurant.repository.RestaurantsRepository;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,9 +55,14 @@ public class RestaurantsService {
     return restaurantsResponseDto;
   }
 
-  private long deleteByRestaurantId(Long restaurantId) {
-    restaurantsRepository.deleteById(restaurantId);
-    return restaurantId;
+  private void deleteByRestaurantId(Long restaurantId) {
+    Optional<Restaurants> restaurantsOptional = restaurantsRepository.findById(restaurantId);
+
+    if (restaurantsOptional.isEmpty()) {
+      throw new IllegalArgumentException("삭제할 가게 정보가 존재하지 않습니다");
+    } else {
+      restaurantsRepository.deleteById(restaurantId);
+    }
   }
 
   private Restaurants findByRestaurantId(Long restaurantId) {

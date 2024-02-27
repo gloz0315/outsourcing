@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class OrderService {
 
   private final MemberRepository memberRepository;
@@ -30,8 +31,6 @@ public class OrderService {
   private final BasketRepository basketRepository;
   private final RestaurantsRepository restaurantsRepository;
 
-  // 주문하는 메서드
-  @Transactional
   public OrderResponseDto order(UserDetails userDetails) {
     Member member = memberRepository.findMemberOrElseThrow(userDetails.getUsername());
 
@@ -59,7 +58,7 @@ public class OrderService {
         .build();
   }
 
-  // 주문 조회 -> 유저 아이디, 오더 아이디, 가게 이름, 주문 상태, 주문 내역들
+  @Transactional(readOnly = true)
   public OrderInfoResponse orderInfo(Long orderId) {
     Order order = orderRepository.findByOrderId(orderId).toModel();
 
@@ -83,7 +82,6 @@ public class OrderService {
         .build();
   }
 
-  @Transactional
   public void orderDelete(Long orderId) {
     OrderEntity orderEntity = orderRepository.findByOrderId(orderId);
     OrderType orderStatus = orderEntity.getOrderStatus();
@@ -97,7 +95,6 @@ public class OrderService {
     //payments도 삭제해야함.
   }
 
-  // 한 가게에만 주문했는지 체크해주는 메서드
   private boolean isSingleRestaurantOrder(List<Basket> basketList) {
     if (basketList.size() == 1) {
       return true;

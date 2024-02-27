@@ -1,12 +1,12 @@
 package com.sparta.outsourcing.domain.favorite.service;
 
+import com.sparta.outsourcing.domain.member.model.entity.MemberEntity;
+import com.sparta.outsourcing.domain.member.repository.MemberJpaRepository;
+import com.sparta.outsourcing.domain.restaurant.repository.RestaurantsRepository;
 import com.sparta.outsourcing.domain.favorite.model.dto.FavoriteRequestDto;
 import com.sparta.outsourcing.domain.favorite.model.dto.FavoriteResponseDto;
 import com.sparta.outsourcing.domain.favorite.model.entity.Favorite;
 import com.sparta.outsourcing.domain.favorite.repository.FavoriteRepository;
-import com.sparta.outsourcing.domain.member.model.entity.MemberEntity;
-import com.sparta.outsourcing.domain.member.repository.MemberJpaRepository;
-import com.sparta.outsourcing.domain.restaurant.repository.RestaurantsRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -79,6 +79,7 @@ public class FavoriteService {
 
     MemberEntity member = memberJpaRepository.findByEmail(userDetails.getUsername())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "유저 인증에 실패했습니다."));
+
 
     Favorite favorite = favoriteRepository.findByRestaurantIdAndMemberId(restaurantId, member.getId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "좋아요를 찾을 수 없습니다."));
