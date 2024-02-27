@@ -30,7 +30,7 @@ public class MemberRepositoryImpl implements MemberRepository {
   @Override
   public Member findMemberOrElseThrow(String email) {
     return memberJpaRepository.findByEmail(email).orElseThrow(
-        EntityNotFoundException::new
+        () -> new EntityNotFoundException("해당 유저가 존재하지 않습니다.")
     ).toModel();
   }
 }
