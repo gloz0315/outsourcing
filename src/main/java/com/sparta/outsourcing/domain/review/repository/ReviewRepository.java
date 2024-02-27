@@ -9,7 +9,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
   List<Review> findByMemberEntityIdAndRestaurantId(Long memberId, Long restaurantId);
 
-  Optional<Review> findByIdAndMemberEntityIdAndRestaurantId(Long id, Long memberEntityId,
-      Long restaurantId);
+  Optional<Review> findByIdAndMemberEntityId(Long reviewId, Long id);
 
+  List<Review> findByMemberEntityId(Long id);
 }

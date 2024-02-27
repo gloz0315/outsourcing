@@ -28,7 +28,8 @@ public class FavoriteController {
   public ResponseEntity<FavoriteResponseDto> addFavorite(
       @RequestBody FavoriteRequestDto requestDto,
       @AuthenticationPrincipal UserDetails userDetails) {
-    FavoriteResponseDto favoriteResponseDto = favoriteService.createFavorite(requestDto, userDetails);
+    FavoriteResponseDto favoriteResponseDto = favoriteService.createFavorite(requestDto,
+        userDetails);
     return ResponseEntity.status(HttpStatus.CREATED).body(favoriteResponseDto);
   }
 
@@ -43,7 +44,8 @@ public class FavoriteController {
   public ResponseEntity<FavoriteResponseDto> findFavoritesByRestaurantId(
       @PathVariable Long restaurantId,
       @AuthenticationPrincipal UserDetails userDetails) {
-    FavoriteResponseDto favoriteResponseDto = favoriteService.findFavoritesByRestaurantId(restaurantId, userDetails);
+    FavoriteResponseDto favoriteResponseDto = favoriteService.findFavoritesByRestaurantId(
+        restaurantId, userDetails);
     return ResponseEntity.ok(favoriteResponseDto);
   }
 

@@ -10,4 +10,5 @@ public interface MemberRepository {
   boolean checkEmail(String email);
 
   Member findMemberOrElseThrow(String email);
+
 }
