@@ -4,6 +4,8 @@ import static com.sparta.outsourcing.global.jwt.TokenState.EXPIRED;
 import static com.sparta.outsourcing.global.jwt.TokenState.INVALID;
 import static com.sparta.outsourcing.global.jwt.TokenState.VALID;
 
+import com.sparta.outsourcing.global.exception.CustomJwtException;
+import com.sparta.outsourcing.global.exception.JwtError;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -78,6 +80,14 @@ public class JwtProvider {
 
   public String getAccessTokenFromRequest(final HttpServletRequest request) {
     return getTokenFromRequest(request);
+  }
+
+  public String substringToken(final String tokenValue) {
+    if (!StringUtils.hasText(tokenValue) || !tokenValue.startsWith(BEARER_PREFIX)) {
+      throw new CustomJwtException(JwtError.INVALID_TOKEN);
+    }
+
+    return tokenValue.substring(BEARER_PREFIX_LENGTH);
   }
 
   // Request 안에 토큰을 가져와서 복호화 하는 메서드
