@@ -1,4 +1,4 @@
-package com.sparta.outsourcing.domain.review.model.entity;
+package com.sparta.outsourcing.domain.payment.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -6,60 +6,57 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
 @Getter
-@Setter
-@Where(clause = "deleted_date IS NULL")
-@AllArgsConstructor
 @Builder
+@Where(clause = "deleted_date IS NULL")
+@Table(name = "payments")
 @NoArgsConstructor
-@Table(name = "review")
-public class Review {
+@AllArgsConstructor
+@SQLDelete(sql = "update payments set deleted = true,deleted_date = NOW() where payment_id= ?")
+public class Payments {
+
 
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
-  @NotNull
-  @Column
-  private String contents;
-  @NotNull
-  @Column
-  @Min(0)
-  @Max(5)
-  private int score;
+  private Long paymentId;
+
+
+  private Long orderId;
+
   @Column
   @NotNull
+  private Short count;
+
+  @Column
+  @NotNull
+  private Integer price;
+
+  @Column
+  @NotNull
+  private Integer totalPrice;
+
+  @Column
   @CreatedDate
-  private LocalDateTime createdDate;
-  @Column
   @NotNull
-  private LocalDateTime updatedDate;
+  private LocalDateTime createdDate;
+
   @Column
-  @LastModifiedDate
   private LocalDateTime deletedDate;
 
-
   @Column(nullable = false)
-  @NotNull
-  private Long memberEntityId;
-
-  @Column(nullable = false)
-  @NotNull
-  private Long restaurantId;
+  private boolean deleted = false;
 
 
 }
