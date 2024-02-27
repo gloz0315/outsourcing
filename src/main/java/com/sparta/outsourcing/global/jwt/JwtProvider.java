@@ -4,6 +4,7 @@ import static com.sparta.outsourcing.global.jwt.TokenState.EXPIRED;
 import static com.sparta.outsourcing.global.jwt.TokenState.INVALID;
 import static com.sparta.outsourcing.global.jwt.TokenState.VALID;
 
+import com.sparta.outsourcing.domain.member.model.MemberRole;
 import com.sparta.outsourcing.global.exception.CustomJwtException;
 import com.sparta.outsourcing.global.exception.JwtError;
 import io.jsonwebtoken.Claims;
@@ -46,15 +47,15 @@ public class JwtProvider {
     key = Keys.hmacShaKeyFor(bytes);
   }
 
-  public String generateAccessToken(final String name, final String role) {
+  public String generateAccessToken(final String name, final MemberRole role) {
     return generateToken(name, role, ACCESS_TOKEN_VALID_TIME);
   }
 
-  public String generateRefreshToken(final String name, final String role) {
+  public String generateRefreshToken(final String name, final MemberRole role) {
     return generateRefreshToken(name, role, REFRESH_TOKEN_VALID_TIME);
   }
 
-  public String generateToken(final String info, final String role, Long time) {
+  public String generateToken(final String info, final MemberRole role, Long time) {
     Date now = new Date();
     return BEARER_PREFIX +
         Jwts.builder()
@@ -66,7 +67,7 @@ public class JwtProvider {
             .compact();
   }
 
-  public String generateRefreshToken(final String info, final String role, Long time) {
+  public String generateRefreshToken(final String info, final MemberRole role, Long time) {
     Date now = new Date();
     return BEARER_PREFIX +
         Jwts.builder()

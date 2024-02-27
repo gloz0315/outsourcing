@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BasketService {
 
   private final BasketRepository basketRepository;
@@ -23,7 +24,6 @@ public class BasketService {
   private final RestaurantsRepository restaurantsRepository;
   // 메뉴 레파지토리 또한 설정해야함
 
-  @Transactional
   public BasketResponseDto inputBasket(UserDetails userDetails, BasketRequestDto dto) {
     Member member = memberRepository.findMemberOrElseThrow(userDetails.getUsername());
     restaurantsRepository.findById(dto.getRestaurantId()).orElseThrow(
@@ -47,12 +47,13 @@ public class BasketService {
         .build();
   }
 
+  @Transactional(readOnly = true)
   public List<BasketResponseDto> getBasketInfo(UserDetails userDetails) {
     Member member = memberRepository.findMemberOrElseThrow(userDetails.getUsername());
 
     List<Basket> basketList = basketRepository.basketInfo(member.getId());
 
-    if(basketList.isEmpty()) {
+    if (basketList.isEmpty()) {
       return null;
     }
 
@@ -63,5 +64,10 @@ public class BasketService {
             .count(basket.getCount())
             .build()
     ).toList();
+  }
+
+  public void deleteBasket(String email) {
+    Member member = memberRepository.findMemberOrElseThrow(email);
+    basketRepository.deleteBasket(member.getId());
   }
 }
