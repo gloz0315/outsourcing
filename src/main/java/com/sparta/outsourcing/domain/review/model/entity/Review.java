@@ -1,7 +1,5 @@
 package com.sparta.outsourcing.domain.review.model.entity;
 
-import com.sparta.outsourcing.domain.member.model.entity.MemberEntity;
-import com.sparta.outsourcing.domain.restaurant.entity.Restaurants;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,10 +10,10 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
@@ -25,6 +23,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Getter
 @Setter
 @Where(clause = "deleted_date IS NULL")
+@AllArgsConstructor
+@Builder
 @NoArgsConstructor
 @Table(name = "review")
 public class Review {
@@ -61,15 +61,5 @@ public class Review {
   @NotNull
   private Long restaurantId;
 
-  @Builder
-  public Review(String contents, int score, Long memberEntityId, Long restaurantId,
-      LocalDateTime createdDate, LocalDateTime updatedDate) {
-    this.contents = contents;
-    this.score = score;
-    this.memberEntityId = memberEntityId;
-    this.restaurantId = restaurantId;
-    this.createdDate = createdDate;
-    this.updatedDate = updatedDate;
-  }
 
 }
