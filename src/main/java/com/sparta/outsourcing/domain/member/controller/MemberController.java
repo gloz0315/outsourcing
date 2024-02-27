@@ -1,15 +1,20 @@
 package com.sparta.outsourcing.domain.member.controller;
 
-import com.sparta.outsourcing.domain.member.service.dto.MemberResponseDto;
 import com.sparta.outsourcing.domain.member.controller.dto.SignupRequestDto;
+import com.sparta.outsourcing.domain.member.controller.dto.UpdateRequestDto;
 import com.sparta.outsourcing.domain.member.service.MemberService;
+import com.sparta.outsourcing.domain.member.service.dto.MemberResponseDto;
 import com.sparta.outsourcing.global.dto.CommonResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,4 +42,30 @@ public class MemberController {
     return CommonResponseDto.ok("로그아웃에 성공하였습니다.", null);
   }
 
+  @GetMapping("/{memberId}")
+  public ResponseEntity<CommonResponseDto<Void>> memberInfo(
+      @PathVariable("memberId") Long memberId
+  ) {
+    memberService.memberInfo(memberId);
+    return CommonResponseDto.ok("조회에 성공하였습니다.", null);
+  }
+
+  @PutMapping("/{memberId}")
+  public ResponseEntity<CommonResponseDto<Void>> updateMember(
+      @PathVariable("memberId") Long memberId,
+      @AuthenticationPrincipal UserDetails userDetails,
+      @RequestBody UpdateRequestDto dto
+  ) {
+    memberService.updateMember(memberId, userDetails.getUsername(), dto);
+    return CommonResponseDto.ok("회원의 정보를 수정하였습니다.", null);
+  }
+
+  @DeleteMapping("/{memberId}")
+  public ResponseEntity<CommonResponseDto<Void>> deleteMember(
+      @PathVariable("memberId") Long memberId,
+      @AuthenticationPrincipal UserDetails userDetails
+  ) {
+    memberService.deleteMember(memberId, userDetails.getUsername());
+    return CommonResponseDto.ok("회원을 삭제하였습니다.", null);
+  }
 }
