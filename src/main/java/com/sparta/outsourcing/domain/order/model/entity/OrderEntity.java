@@ -23,7 +23,7 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor
 @Builder
 @SQLDelete(sql = "update orders set deleted_date = NOW() where id = ?")
-@SQLRestriction(value = "deleted_date is NULL or order_status = 'Delivery Completed'")
+@SQLRestriction(value = "deleted_date is NULL and order_status != 'COMPLETED'")
 @Table(name = "orders")
 public class OrderEntity extends OrderTimestamped {
 
@@ -62,5 +62,13 @@ public class OrderEntity extends OrderTimestamped {
 
   public void updateCancel() {
     this.orderStatus = OrderType.CANCEL;
+  }
+
+  public void update() {
+    if(this.orderStatus.equals(OrderType.WAITING)) {
+      this.orderStatus = OrderType.DELIVERY;
+    } else {
+      this.orderStatus = OrderType.COMPLETED;
+    }
   }
 }

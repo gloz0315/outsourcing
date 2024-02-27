@@ -1,8 +1,6 @@
 package com.sparta.outsourcing.domain.order.repository;
 
 import com.sparta.outsourcing.domain.basket.model.Basket;
-import com.sparta.outsourcing.domain.order.model.Order;
-import com.sparta.outsourcing.domain.order.model.OrderDetails;
 import com.sparta.outsourcing.domain.order.model.OrderType;
 import com.sparta.outsourcing.domain.order.model.entity.OrderDetailsEntity;
 import com.sparta.outsourcing.domain.order.model.entity.OrderEntity;
@@ -64,5 +62,10 @@ public class OrderRepositoryImpl implements OrderRepository {
     OrderEntity orderEntity = findByOrderId(orderId);
     orderEntity.updateCancel();
     orderJpaRepository.saveAndFlush(orderEntity);
+  }
+
+  @Override
+  public List<OrderEntity> findAll() {
+    return orderJpaRepository.findAll();
   }
 }
