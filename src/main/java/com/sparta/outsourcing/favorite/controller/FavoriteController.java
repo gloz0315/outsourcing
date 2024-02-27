@@ -7,13 +7,14 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -25,30 +26,32 @@ public class FavoriteController {
 
   @PostMapping
   public ResponseEntity<FavoriteResponseDto> addFavorite(
-      @RequestBody FavoriteRequestDto requestDto) {
-    FavoriteResponseDto favoriteResponseDto = favoriteService.createFavorite(requestDto);
+      @RequestBody FavoriteRequestDto requestDto,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    FavoriteResponseDto favoriteResponseDto = favoriteService.createFavorite(requestDto, userDetails);
     return ResponseEntity.status(HttpStatus.CREATED).body(favoriteResponseDto);
   }
 
-  @GetMapping("/{memberId}")
+  @GetMapping
   public ResponseEntity<List<FavoriteResponseDto>> findAllFavoritesByMember(
-      @PathVariable Long memberId) {
-    List<FavoriteResponseDto> favorites = favoriteService.findAllFavoritesByMemberId(memberId);
+      @AuthenticationPrincipal UserDetails userDetails) {
+    List<FavoriteResponseDto> favorites = favoriteService.findAllFavoritesByMemberId(userDetails);
     return ResponseEntity.ok(favorites);
   }
 
-  @GetMapping("/restaurants/{restaurantId}")
-  public ResponseEntity<List<FavoriteResponseDto>> findFavoritesByRestaurantId(
-      @PathVariable Long restaurantId, @RequestParam Long memberId) {
-    List<FavoriteResponseDto> favorites = favoriteService.findFavoritesByRestaurantId(restaurantId,
-        memberId);
-    return ResponseEntity.ok(favorites);
+  @GetMapping("/{restaurantId}")
+  public ResponseEntity<FavoriteResponseDto> findFavoritesByRestaurantId(
+      @PathVariable Long restaurantId,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    FavoriteResponseDto favoriteResponseDto = favoriteService.findFavoritesByRestaurantId(restaurantId, userDetails);
+    return ResponseEntity.ok(favoriteResponseDto);
   }
 
   @DeleteMapping("/{restaurantId}")
-  public ResponseEntity<Void> deleteFavorite(@RequestParam Long memberId,
-      @PathVariable Long restaurantId) {
-    favoriteService.deleteFavorite(memberId, restaurantId);
+  public ResponseEntity<Void> deleteFavorite(
+      @PathVariable Long restaurantId,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    favoriteService.deleteFavorite(restaurantId, userDetails);
     return ResponseEntity.noContent().build();
   }
 }
