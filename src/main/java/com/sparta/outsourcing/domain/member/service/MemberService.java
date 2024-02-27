@@ -59,13 +59,12 @@ public class MemberService {
     tokenRepository.deleteToken(refreshToken);
   }
 
-  // 멤버 조회 -> 리뷰, 좋아요 뭐가 있는지 확인
   @Transactional(readOnly = true)
   public MemberInfoResponse memberInfo(Long memberId) {
     Member member = memberRepository.findMemberOrElseThrow(memberId);
 
     List<Favorite> favoriteList = favoriteRepository.findAllByMemberId(member.getId());
-    List<Review> reviewList = new ArrayList<>(); // 리뷰 정보를 다 가져올 떄 됨
+    List<Review> reviewList = reviewRepository.findByMemberEntityId(member.getId());
     
     return MemberInfoResponse.builder()
         .memberId(member.getId())
