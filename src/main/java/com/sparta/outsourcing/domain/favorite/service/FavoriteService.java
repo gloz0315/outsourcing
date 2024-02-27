@@ -1,12 +1,12 @@
-package com.sparta.outsourcing.favorite.service;
+package com.sparta.outsourcing.domain.favorite.service;
 
+import com.sparta.outsourcing.domain.favorite.model.dto.FavoriteRequestDto;
+import com.sparta.outsourcing.domain.favorite.model.dto.FavoriteResponseDto;
+import com.sparta.outsourcing.domain.favorite.model.entity.Favorite;
+import com.sparta.outsourcing.domain.favorite.repository.FavoriteRepository;
 import com.sparta.outsourcing.domain.member.model.entity.MemberEntity;
 import com.sparta.outsourcing.domain.member.repository.MemberJpaRepository;
 import com.sparta.outsourcing.domain.restaurant.repository.RestaurantsRepository;
-import com.sparta.outsourcing.favorite.model.dto.FavoriteRequestDto;
-import com.sparta.outsourcing.favorite.model.dto.FavoriteResponseDto;
-import com.sparta.outsourcing.favorite.model.entity.Favorite;
-import com.sparta.outsourcing.favorite.repository.FavoriteRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;

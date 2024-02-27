@@ -1,4 +1,4 @@
-package com.sparta.outsourcing.favorite.model.dto;
+package com.sparta.outsourcing.domain.favorite.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
