@@ -84,8 +84,4 @@ public class MemberEntity extends Timestamped {
     this.address = (dto.getAddress().isEmpty()) ? this.address : dto.getAddress();
     this.number = (dto.getNumber().isEmpty()) ? this.number : dto.getNumber();
   }
-
-  public void updatePassword(String password) {
-    this.password = password;
-  }
 }

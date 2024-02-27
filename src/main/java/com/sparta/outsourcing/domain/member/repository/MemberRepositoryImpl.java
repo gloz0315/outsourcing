@@ -47,12 +47,11 @@ public class MemberRepositoryImpl implements MemberRepository {
         () -> new EntityNotFoundException("해당 유저의 정보가 존재하지 않습니다.")
     );
 
-    memberEntity.updateMember(dto);
-
-    if (!dto.getPassword().isEmpty()) {
-      String changePassword = passwordEncoder.encode(dto.getPassword());
-      memberEntity.updatePassword(changePassword);
+    if(!passwordEncoder.matches(dto.getPassword(), memberEntity.getPassword())) {
+      throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
     }
+
+    memberEntity.updateMember(dto);
   }
 
   @Override
