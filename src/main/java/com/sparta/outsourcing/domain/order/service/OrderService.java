@@ -88,7 +88,7 @@ public class OrderService {
     OrderEntity orderEntity = orderRepository.findByOrderId(orderId);
     OrderType orderStatus = orderEntity.getOrderStatus();
 
-    if(orderStatus.equals(OrderType.DELIVERY)) {
+    if (orderStatus.equals(OrderType.DELIVERY)) {
       throw new IllegalArgumentException("현재 배달 중이므로 결제를 취소할 수 없습니다.");
     }
 
