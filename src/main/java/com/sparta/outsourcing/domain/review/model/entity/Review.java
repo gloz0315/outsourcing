@@ -61,5 +61,9 @@ public class Review {
   @NotNull
   private Long restaurantId;
 
+  @Column(nullable = false)
+  @NotNull
+  private Long menuId;
+
 
 }

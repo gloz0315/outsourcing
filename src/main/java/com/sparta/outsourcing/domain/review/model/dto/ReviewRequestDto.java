@@ -22,6 +22,8 @@ public class ReviewRequestDto {
   private Integer score;
   @NotNull()
   private Long restaurantId;
+  @NotNull()
+  private Long menuId;
 
 
 }

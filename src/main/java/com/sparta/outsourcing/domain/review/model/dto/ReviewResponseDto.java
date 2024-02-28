@@ -16,6 +16,7 @@ public class ReviewResponseDto {
   private int score;
   private Long memberEntityId;
   private Long restaurantId;
+  private Long menuId;
   private LocalDateTime createdDate;
   private LocalDateTime updatedDate;
 
@@ -25,6 +26,7 @@ public class ReviewResponseDto {
     this.score = review.getScore();
     this.memberEntityId = review.getMemberEntityId();
     this.restaurantId = review.getRestaurantId();
+    this.menuId = review.getMenuId();
     this.createdDate = review.getCreatedDate();
     this.updatedDate = review.getUpdatedDate();
   }
