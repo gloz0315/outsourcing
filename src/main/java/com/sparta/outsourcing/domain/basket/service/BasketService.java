@@ -5,7 +5,8 @@ import com.sparta.outsourcing.domain.basket.repository.BasketRepository;
 import com.sparta.outsourcing.domain.basket.service.dto.BasketRequestDto;
 import com.sparta.outsourcing.domain.basket.service.dto.BasketResponseDto;
 import com.sparta.outsourcing.domain.member.model.Member;
-import com.sparta.outsourcing.domain.member.repository.MemberRepository;
+import com.sparta.outsourcing.domain.member.repository.member.MemberRepository;
+import com.sparta.outsourcing.domain.menu.repository.MenuRepository;
 import com.sparta.outsourcing.domain.restaurant.repository.RestaurantsRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
@@ -22,6 +23,7 @@ public class BasketService {
   private final BasketRepository basketRepository;
   private final MemberRepository memberRepository;
   private final RestaurantsRepository restaurantsRepository;
+  private final MenuRepository menuRepository;
   // 메뉴 레파지토리 또한 설정해야함
 
   public BasketResponseDto inputBasket(UserDetails userDetails, BasketRequestDto dto) {
@@ -29,7 +31,9 @@ public class BasketService {
     restaurantsRepository.findById(dto.getRestaurantId()).orElseThrow(
         () -> new EntityNotFoundException("해당 가게 정보가 없습니다.")
     );
-    // 메뉴에 대한 정보도 조회해야함. (있는지 없는지)
+
+    menuRepository.findByMenu(dto.getRestaurantId(), dto.getMenuId());
+
     Basket basket = Basket.builder()
         .memberId(member.getId())
         .restaurantId(dto.getRestaurantId())

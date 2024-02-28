@@ -3,7 +3,9 @@ package com.sparta.outsourcing.domain.order.service;
 import com.sparta.outsourcing.domain.basket.model.Basket;
 import com.sparta.outsourcing.domain.basket.repository.BasketRepository;
 import com.sparta.outsourcing.domain.member.model.Member;
-import com.sparta.outsourcing.domain.member.repository.MemberRepository;
+import com.sparta.outsourcing.domain.member.repository.member.MemberRepository;
+import com.sparta.outsourcing.domain.menu.model.Menu;
+import com.sparta.outsourcing.domain.menu.repository.MenuRepository;
 import com.sparta.outsourcing.domain.order.model.Order;
 import com.sparta.outsourcing.domain.order.model.OrderDetails;
 import com.sparta.outsourcing.domain.order.model.OrderType;
@@ -13,8 +15,11 @@ import com.sparta.outsourcing.domain.order.repository.OrderRepository;
 import com.sparta.outsourcing.domain.order.service.dto.MenuInfoDto;
 import com.sparta.outsourcing.domain.order.service.dto.OrderInfoResponse;
 import com.sparta.outsourcing.domain.order.service.dto.OrderResponseDto;
+import com.sparta.outsourcing.domain.payment.entity.Payments;
+import com.sparta.outsourcing.domain.payment.repository.PaymentsRepository;
 import com.sparta.outsourcing.domain.restaurant.repository.RestaurantsRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,6 +35,8 @@ public class OrderService {
   private final OrderRepository orderRepository;
   private final BasketRepository basketRepository;
   private final RestaurantsRepository restaurantsRepository;
+  private final MenuRepository menuRepository;
+  private final PaymentsRepository paymentsRepository;
 
   public OrderResponseDto order(UserDetails userDetails) {
     Member member = memberRepository.findMemberOrElseThrow(userDetails.getUsername());
@@ -46,10 +53,11 @@ public class OrderService {
 
     Long restaurantId = basketList.get(0).getRestaurantId();
 
-    // 후에 주문이 되었으면 스케줄링으로 통해서 정해진 시간에 주문 상태를 변경할 예정
     Long orderId = orderRepository.registerOrder(member.getId(), restaurantId);
     orderRepository.registerOrderDetails(orderId, basketList);
-    // 후에 결제에 대한 레파지토리도 필요함 -> 장바구니 안의 정보를 order 쪽으로 넘어갔으니, 결제 금액도 데이터베이스에 남겨야하기 때문
+
+    registerPayment(basketList, restaurantId, orderId);
+
     basketRepository.deleteBasket(member.getId());
 
     return OrderResponseDto.builder()
@@ -110,4 +118,26 @@ public class OrderService {
     }
     return true;
   }
+
+  private void registerPayment(List<Basket> basketList, Long restaurantId, Long orderId) {
+    int totalPrice = 0;
+
+    for (Basket basket : basketList) {
+      int count = basket.getCount();
+      Long menuId = basket.getMenuId();
+      Menu menu = menuRepository.findByMenu(restaurantId, menuId);
+      int price = menu.getPrice();
+
+      totalPrice += count * price;
+    }
+
+    Payments payments = Payments.builder()
+        .orderId(orderId)
+        .totalPrice(totalPrice)
+        .createdDate(LocalDateTime.now())
+        .build();
+
+    paymentsRepository.save(payments);
+  }
+
 }

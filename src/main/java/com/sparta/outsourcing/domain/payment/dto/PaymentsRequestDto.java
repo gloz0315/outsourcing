@@ -9,12 +9,4 @@ public class PaymentsRequestDto {
 
   private Short count;
   private Integer price;
-
-  @Builder
-  public Payments toEntity(){
-    return Payments.builder()
-        .count(this.count)
-        .price(this.price)
-        .build();
-  }
 }

@@ -1,7 +1,9 @@
 package com.sparta.outsourcing.domain.review.service;
 
 import com.sparta.outsourcing.domain.member.model.entity.MemberEntity;
-import com.sparta.outsourcing.domain.member.repository.MemberJpaRepository;
+import com.sparta.outsourcing.domain.member.repository.member.MemberJpaRepository;
+import com.sparta.outsourcing.domain.menu.model.entity.MenuEntity;
+import com.sparta.outsourcing.domain.menu.repository.MenuJpaRepository;
 import com.sparta.outsourcing.domain.restaurant.entity.Restaurants;
 import com.sparta.outsourcing.domain.restaurant.repository.RestaurantsRepository;
 import com.sparta.outsourcing.domain.review.model.dto.ReviewRequestDto;
@@ -24,6 +26,7 @@ public class ReviewService {
   private final ReviewRepository reviewRepository;
   private final MemberJpaRepository memberJpaRepository;
   private final RestaurantsRepository restaurantsRepository;
+  private final MenuJpaRepository menuJpaRepository;
 
 
   @Transactional
@@ -31,15 +34,12 @@ public class ReviewService {
     // 유저 확인
     MemberEntity member = memberJpaRepository.findByEmail(userDetails.getUsername())
         .orElseThrow(() -> new IllegalArgumentException("잘못된 유저 이름 입니다."));
-
     // 가게 확인
     Restaurants restaurant = restaurantsRepository.findById(requestDto.getRestaurantId())
         .orElseThrow(() -> new IllegalArgumentException("잘못된 가게 ID 입니다"));
-
-    // contents 필드에 대한 null 체크 추가
-    if (requestDto.getContents() == null || requestDto.getContents().trim().isEmpty()) {
-      throw new IllegalArgumentException("리뷰 내용이 비어있습니다.");
-    }
+    // 메뉴 확인
+    MenuEntity menu = menuJpaRepository.findById(requestDto.getMenuId())
+        .orElseThrow(() -> new IllegalArgumentException("잘못된 메뉴 ID 입니다"));
 
     // 리뷰 생성
     Review review = Review.builder()
@@ -47,6 +47,7 @@ public class ReviewService {
         .score(requestDto.getScore())
         .memberEntityId(member.getId()) // UserDetails에서 얻은 사용자 ID 사용
         .restaurantId(requestDto.getRestaurantId())
+        .menuId(requestDto.getMenuId())
         .createdDate(LocalDateTime.now())
         .updatedDate(LocalDateTime.now())
         .build();
@@ -55,7 +56,7 @@ public class ReviewService {
 
     // 응답 생성
     return new ReviewResponseDto(review.getId(), review.getContents(), review.getScore(),
-        review.getMemberEntityId(), review.getRestaurantId(), review.getCreatedDate(),
+        review.getMemberEntityId(), review.getRestaurantId(), review.getMenuId(), review.getCreatedDate(),
         review.getUpdatedDate());
   }
 
