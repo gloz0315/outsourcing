@@ -2,6 +2,7 @@ package com.sparta.outsourcing.domain.payment.service;
 
 import com.sparta.outsourcing.domain.payment.dto.PaymentsResponseDto;
 import com.sparta.outsourcing.domain.payment.entity.Payments;
+import com.sparta.outsourcing.domain.payment.repository.PaymentsJpaRepository;
 import com.sparta.outsourcing.domain.payment.repository.PaymentsRepository;
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PaymentsService {
 
-  private final PaymentsRepository paymentsRepository;
+  private final PaymentsJpaRepository paymentsRepository;
 
 
 

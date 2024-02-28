@@ -1,11 +1,9 @@
 package com.sparta.outsourcing.domain.payment.repository;
 
-import com.sparta.outsourcing.domain.payment.entity.Payments;
-import java.util.List;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.sparta.outsourcing.domain.order.model.Order;
+import org.springframework.stereotype.Repository;
 
-
-public interface PaymentsRepository extends JpaRepository<Payments,Long> {
-
-  List<Payments> findAllByOrderByPaymentId();
+@Repository
+public interface PaymentsRepository{
+  Order findByOrderId(Long orderId);
 }
