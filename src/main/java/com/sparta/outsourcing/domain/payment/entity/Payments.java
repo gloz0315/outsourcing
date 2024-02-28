@@ -32,16 +32,10 @@ public class Payments {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long paymentId;
 
-
+  @Column
+  @NotNull
   private Long orderId;
 
-  @Column
-  @NotNull
-  private Short count;
-
-  @Column
-  @NotNull
-  private Integer price;
 
   @Column
   @NotNull
