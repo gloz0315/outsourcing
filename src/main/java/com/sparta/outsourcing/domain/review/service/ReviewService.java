@@ -1,5 +1,6 @@
 package com.sparta.outsourcing.domain.review.service;
 
+import static com.sparta.outsourcing.global.exception.CustomError.MEMBER_NOT_EXISTS;
 import static com.sparta.outsourcing.global.exception.CustomError.NOT_EXIST_MENU;
 import static com.sparta.outsourcing.global.exception.CustomError.NOT_EXIST_REVIEW;
 import static com.sparta.outsourcing.global.exception.CustomError.NO_AUTH;
@@ -68,7 +69,7 @@ public class ReviewService {
 
   public List<ReviewResponseDto> findReviews(UserDetails userDetails, Long restaurantId) {
     MemberEntity member = memberJpaRepository.findByEmail(userDetails.getUsername())
-        .orElseThrow(() -> new IllegalArgumentException("잘못된 유저 이름 입니다."));
+        .orElseThrow(() -> new CustomException(NO_AUTH));
 
     List<Review> reviews;
     if (restaurantId != null) {
@@ -109,7 +110,14 @@ public class ReviewService {
     MemberEntity member = memberJpaRepository.findByEmail(userDetails.getUsername())
         .orElseThrow(() -> new CustomException(NO_AUTH));
 
-    Review review = reviewRepository.findByIdAndMemberEntityId(reviewId, member.getId())
+    Restaurants restaurant = restaurantsRepository.findById(requestDto.getRestaurantId())
+        .orElseThrow(() -> new CustomException(RESTAURANT_NOT_EXIST));
+
+    MenuEntity menu = menuJpaRepository.findById(requestDto.getMenuId())
+        .orElseThrow(() -> new CustomException(NOT_EXIST_MENU));
+
+    Review review = reviewRepository.findByIdAndMemberEntityIdAndRestaurantIdAndMenuId(
+            reviewId, member.getId(), restaurant.getRestaurantId(), menu.getId())
         .orElseThrow(() -> new CustomException(NOT_EXIST_REVIEW));
 
     review.setContents(requestDto.getContents());
