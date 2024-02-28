@@ -15,7 +15,8 @@ public class BasketRepositoryImpl implements BasketRepository {
   // 해당 유저의 아이디를 통해 장바구니에 아이템이 있는지 판단 -> 없다면 저장 있다면 중복이 되는지 체크 후 저장
   @Override
   public void register(Basket basket) {
-    BasketEntity basketInfo = basketJpaRepository.findFirstByMemberIdAndAndMenuId(basket.getMemberId(), basket.getMenuId());
+    BasketEntity basketInfo = basketJpaRepository.findFirstByMemberIdAndAndMenuId(
+        basket.getMemberId(), basket.getMenuId());
 
     if (basketInfo == null) {
       basketJpaRepository.save(
@@ -39,7 +40,7 @@ public class BasketRepositoryImpl implements BasketRepository {
   @Override
   public List<Basket> basketInfo(Long memberId) {
     List<BasketEntity> basketInfo = basketJpaRepository.findBasketEntityByMemberId(memberId);
-    
+
     return basketInfo.stream().map(BasketEntity::toModel).toList();
   }
 }

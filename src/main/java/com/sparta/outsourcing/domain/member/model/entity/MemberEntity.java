@@ -1,9 +1,15 @@
 package com.sparta.outsourcing.domain.member.model.entity;
 
+import static com.sparta.outsourcing.domain.member.model.MemberRole.*;
+
 import com.sparta.outsourcing.domain.common.entity.Timestamped;
 import com.sparta.outsourcing.domain.member.model.Member;
+import com.sparta.outsourcing.domain.member.model.MemberRole;
+import com.sparta.outsourcing.domain.member.service.dto.UpdateDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -44,6 +50,10 @@ public class MemberEntity extends Timestamped {
   @Column(nullable = false, length = 13)
   private String number;
 
+  @Column(nullable = false, length = 20)
+  @Enumerated(EnumType.STRING)
+  private MemberRole role;
+
   public static MemberEntity of(String email, String nickname, String password, String address, String number) {
 
     return MemberEntity.builder()
@@ -52,6 +62,7 @@ public class MemberEntity extends Timestamped {
         .password(password)
         .address(address)
         .number(number)
+        .role(USER)
         .build();
   }
 
@@ -64,6 +75,17 @@ public class MemberEntity extends Timestamped {
         .password(password)
         .address(address)
         .number(number)
+        .role(role)
         .build();
+  }
+
+  public void updateMember(UpdateDto dto) {
+    this.nickname = (dto.getNickname().isEmpty()) ? this.nickname : dto.getNickname();
+    this.address = (dto.getAddress().isEmpty()) ? this.address : dto.getAddress();
+    this.number = (dto.getNumber().isEmpty()) ? this.number : dto.getNumber();
+  }
+
+  public void updatePassword(String password) {
+    this.password = password;
   }
 }

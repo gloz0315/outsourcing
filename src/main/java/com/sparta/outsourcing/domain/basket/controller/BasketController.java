@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,5 +38,13 @@ public class BasketController {
   ) {
     List<BasketResponseDto> responseDtoList = basketService.getBasketInfo(userDetails);
     return CommonResponseDto.ok("장바구니 조회에 성공하였습니다.", responseDtoList);
+  }
+
+  @DeleteMapping
+  public ResponseEntity<CommonResponseDto<Void>> deleteBasket(
+      @AuthenticationPrincipal UserDetails userDetails
+  ) {
+    basketService.deleteBasket(userDetails.getUsername());
+    return CommonResponseDto.ok("장바구니가 비워졌습니다.", null);
   }
 }
