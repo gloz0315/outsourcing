@@ -1,7 +1,7 @@
 package com.sparta.outsourcing.domain.review.service;
 
 import com.sparta.outsourcing.domain.member.model.entity.MemberEntity;
-import com.sparta.outsourcing.domain.member.repository.MemberJpaRepository;
+import com.sparta.outsourcing.domain.member.repository.member.MemberJpaRepository;
 import com.sparta.outsourcing.domain.restaurant.entity.Restaurants;
 import com.sparta.outsourcing.domain.restaurant.repository.RestaurantsRepository;
 import com.sparta.outsourcing.domain.review.model.dto.ReviewRequestDto;

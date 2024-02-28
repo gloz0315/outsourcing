@@ -3,7 +3,7 @@ package com.sparta.outsourcing.domain.order.service;
 import com.sparta.outsourcing.domain.basket.model.Basket;
 import com.sparta.outsourcing.domain.basket.repository.BasketRepository;
 import com.sparta.outsourcing.domain.member.model.Member;
-import com.sparta.outsourcing.domain.member.repository.MemberRepository;
+import com.sparta.outsourcing.domain.member.repository.member.MemberRepository;
 import com.sparta.outsourcing.domain.order.model.Order;
 import com.sparta.outsourcing.domain.order.model.OrderDetails;
 import com.sparta.outsourcing.domain.order.model.OrderType;

@@ -1,6 +1,6 @@
 package com.sparta.outsourcing.domain.member.model.entity;
 
-import static com.sparta.outsourcing.domain.member.model.MemberRole.*;
+import static com.sparta.outsourcing.domain.member.model.MemberRole.USER;
 
 import com.sparta.outsourcing.domain.common.entity.Timestamped;
 import com.sparta.outsourcing.domain.member.model.Member;
@@ -54,7 +54,8 @@ public class MemberEntity extends Timestamped {
   @Enumerated(EnumType.STRING)
   private MemberRole role;
 
-  public static MemberEntity of(String email, String nickname, String password, String address, String number) {
+  public static MemberEntity of(String email, String nickname, String password, String address,
+      String number) {
 
     return MemberEntity.builder()
         .email(email)
@@ -83,5 +84,13 @@ public class MemberEntity extends Timestamped {
     this.nickname = (dto.getNickname().isEmpty()) ? this.nickname : dto.getNickname();
     this.address = (dto.getAddress().isEmpty()) ? this.address : dto.getAddress();
     this.number = (dto.getNumber().isEmpty()) ? this.number : dto.getNumber();
+  }
+
+  public void updatePassword(String password) {
+    if (password.equals(this.password)) {
+      throw new IllegalArgumentException("현재 비밀번호 입니다.");
+    }
+
+    this.password = password;
   }
 }

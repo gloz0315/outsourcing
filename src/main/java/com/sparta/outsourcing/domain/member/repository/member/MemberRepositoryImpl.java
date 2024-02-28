@@ -1,12 +1,16 @@
-package com.sparta.outsourcing.domain.member.repository;
+package com.sparta.outsourcing.domain.member.repository.member;
 
 import com.sparta.outsourcing.domain.member.model.Member;
 import com.sparta.outsourcing.domain.member.model.MemberRole;
+import com.sparta.outsourcing.domain.member.model.entity.History;
 import com.sparta.outsourcing.domain.member.model.entity.MemberEntity;
+import com.sparta.outsourcing.domain.member.repository.history.HistoryJpaRepository;
 import com.sparta.outsourcing.domain.member.service.dto.MemberSignupDto;
 import com.sparta.outsourcing.domain.member.service.dto.UpdateDto;
+import com.sparta.outsourcing.domain.member.service.dto.UpdatePasswordDto;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Repository;
 public class MemberRepositoryImpl implements MemberRepository {
 
   private final MemberJpaRepository memberJpaRepository;
+  private final HistoryJpaRepository historyJpaRepository;
   private final PasswordEncoder passwordEncoder;
 
   @PostConstruct
@@ -47,11 +52,39 @@ public class MemberRepositoryImpl implements MemberRepository {
         () -> new EntityNotFoundException("해당 유저의 정보가 존재하지 않습니다.")
     );
 
-    if(!passwordEncoder.matches(dto.getPassword(), memberEntity.getPassword())) {
+    if (!passwordEncoder.matches(dto.getPassword(), memberEntity.getPassword())) {
       throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
     }
 
     memberEntity.updateMember(dto);
+  }
+
+  @Override
+  public void updatePasswordMember(UpdatePasswordDto dto, Long memberId) {
+    MemberEntity memberEntity = memberJpaRepository.findById(memberId).orElseThrow(
+        () -> new EntityNotFoundException("해당 유저의 정보가 존재하지 않습니다.")
+    );
+
+    if (!passwordEncoder.matches(dto.getCurrentPassword(), memberEntity.getPassword())) {
+      throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+    }
+
+    List<History> passwordHistoryEntityList = historyJpaRepository.findTop3ByMemberIdOrderByCreatedDateDesc(
+        memberId);
+
+    passwordHistoryEntityList.forEach(
+        passwordHistoryEntity -> {
+          if(passwordEncoder.matches(dto.getChangePassword(), passwordHistoryEntity.getPassword())) {
+            throw new IllegalArgumentException("최근에 해당 비밀번호로 변경한 적이 있습니다.");
+          }
+        }
+    );
+
+    // 비밀번호 변경
+    memberEntity.updatePassword(passwordEncoder.encode(dto.getChangePassword()));
+    // history에 변경된 비밀번호 저장
+    History history = History.of(memberId, passwordEncoder.encode(dto.getChangePassword()));
+    historyJpaRepository.save(history);
   }
 
   @Override
