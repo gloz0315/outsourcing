@@ -16,7 +16,7 @@ import com.sparta.outsourcing.domain.order.service.dto.MenuInfoDto;
 import com.sparta.outsourcing.domain.order.service.dto.OrderInfoResponse;
 import com.sparta.outsourcing.domain.order.service.dto.OrderResponseDto;
 import com.sparta.outsourcing.domain.payment.entity.Payments;
-import com.sparta.outsourcing.domain.payment.repository.PaymentsRepository;
+import com.sparta.outsourcing.domain.payment.repository.PaymentsJpaRepository;
 import com.sparta.outsourcing.domain.restaurant.repository.RestaurantsRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
@@ -36,7 +36,7 @@ public class OrderService {
   private final BasketRepository basketRepository;
   private final RestaurantsRepository restaurantsRepository;
   private final MenuRepository menuRepository;
-  private final PaymentsRepository paymentsRepository;
+  private final PaymentsJpaRepository paymentsJpaRepository;
 
   public OrderResponseDto order(UserDetails userDetails) {
     Member member = memberRepository.findMemberOrElseThrow(userDetails.getUsername());
@@ -137,7 +137,7 @@ public class OrderService {
         .createdDate(LocalDateTime.now())
         .build();
 
-    paymentsRepository.save(payments);
+    paymentsJpaRepository.save(payments);
   }
 
 }

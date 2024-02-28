@@ -2,7 +2,7 @@ package com.sparta.outsourcing.domain.payment.service;
 
 import com.sparta.outsourcing.domain.payment.dto.PaymentsResponseDto;
 import com.sparta.outsourcing.domain.payment.entity.Payments;
-import com.sparta.outsourcing.domain.payment.repository.PaymentsRepository;
+import com.sparta.outsourcing.domain.payment.repository.PaymentsJpaRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -12,30 +12,30 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PaymentsService {
 
-  private final PaymentsRepository paymentsRepository;
+  private final PaymentsJpaRepository paymentsRepository;
 
 
 
-  public PaymentsResponseDto getPayment(Long paymentId) {
-    Payments payments = findByPaymentId(paymentId);
+  public PaymentsResponseDto getPayment(Long id) {
+    Payments payments = findByPaymentId(id);
     PaymentsResponseDto paymentsResponseDto = new PaymentsResponseDto(payments);
     return paymentsResponseDto;
   }
 
   public List<PaymentsResponseDto> getPaymentList() {
-    return paymentsRepository.findAllByOrderByPaymentId().stream()
+    return paymentsRepository.findAllByOrderById().stream()
         .map(PaymentsResponseDto::new).toList();
   }
 
-  public Long deletePayment(Long paymentId){
+  public Long deletePayment(Long id){
 
-    deleteByPaymentId(paymentId);
-      return paymentId;
+    deleteByPaymentId(id);
+      return id;
   }
 
 
-  private Payments findByPaymentId(Long paymentId) {
-    return paymentsRepository.findById(paymentId)
+  private Payments findByPaymentId(Long id) {
+    return paymentsRepository.findById(id)
         .orElseThrow(() -> new IllegalArgumentException("결제 정보가 존재하지 않습니다"));
   }
   private void deleteByPaymentId(Long paymentId){
