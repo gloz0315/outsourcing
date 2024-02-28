@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface HistoryJpaRepository extends JpaRepository<History, Long> {
 
-  @Query(value = "select p from History p order by p.createdDate desc limit 3")
+  @Query(value = "select p from History p where p.memberId = ?1 order by p.createdDate desc limit 3")
   List<History> findTop3ByMemberIdOrderByCreatedDateDesc(Long memberId);
 }
