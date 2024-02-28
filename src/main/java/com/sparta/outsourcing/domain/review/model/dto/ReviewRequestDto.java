@@ -24,6 +24,4 @@ public class ReviewRequestDto {
   private Long restaurantId;
   @NotNull()
   private Long menuId;
-
-
 }

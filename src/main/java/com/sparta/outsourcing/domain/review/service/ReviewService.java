@@ -1,5 +1,10 @@
 package com.sparta.outsourcing.domain.review.service;
 
+import static com.sparta.outsourcing.global.exception.CustomError.NOT_EXIST_MENU;
+import static com.sparta.outsourcing.global.exception.CustomError.NOT_EXIST_REVIEW;
+import static com.sparta.outsourcing.global.exception.CustomError.NO_AUTH;
+import static com.sparta.outsourcing.global.exception.CustomError.RESTAURANT_NOT_EXIST;
+
 import com.sparta.outsourcing.domain.member.model.entity.MemberEntity;
 import com.sparta.outsourcing.domain.member.repository.member.MemberJpaRepository;
 import com.sparta.outsourcing.domain.menu.model.entity.MenuEntity;
@@ -10,9 +15,9 @@ import com.sparta.outsourcing.domain.review.model.dto.ReviewRequestDto;
 import com.sparta.outsourcing.domain.review.model.dto.ReviewResponseDto;
 import com.sparta.outsourcing.domain.review.model.entity.Review;
 import com.sparta.outsourcing.domain.review.repository.ReviewRepository;
+import com.sparta.outsourcing.global.exception.CustomException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,13 +38,13 @@ public class ReviewService {
   public ReviewResponseDto createReview(ReviewRequestDto requestDto, UserDetails userDetails) {
     // 유저 확인
     MemberEntity member = memberJpaRepository.findByEmail(userDetails.getUsername())
-        .orElseThrow(() -> new IllegalArgumentException("잘못된 유저 이름 입니다."));
+        .orElseThrow(() -> new CustomException(NO_AUTH));
     // 가게 확인
     Restaurants restaurant = restaurantsRepository.findById(requestDto.getRestaurantId())
-        .orElseThrow(() -> new IllegalArgumentException("잘못된 가게 ID 입니다"));
+        .orElseThrow(() -> new CustomException(RESTAURANT_NOT_EXIST));
     // 메뉴 확인
     MenuEntity menu = menuJpaRepository.findById(requestDto.getMenuId())
-        .orElseThrow(() -> new IllegalArgumentException("잘못된 메뉴 ID 입니다"));
+        .orElseThrow(() -> new CustomException(NOT_EXIST_MENU));
 
     // 리뷰 생성
     Review review = Review.builder()
@@ -56,7 +61,8 @@ public class ReviewService {
 
     // 응답 생성
     return new ReviewResponseDto(review.getId(), review.getContents(), review.getScore(),
-        review.getMemberEntityId(), review.getRestaurantId(), review.getMenuId(), review.getCreatedDate(),
+        review.getMemberEntityId(), review.getRestaurantId(), review.getMenuId(),
+        review.getCreatedDate(),
         review.getUpdatedDate());
   }
 
@@ -77,17 +83,17 @@ public class ReviewService {
 
   public ReviewResponseDto findReviewById(Long reviewId, UserDetails userDetails) {
     MemberEntity member = memberJpaRepository.findByEmail(userDetails.getUsername())
-        .orElseThrow(() -> new IllegalArgumentException("잘못된 유저 이름 입니다."));
+        .orElseThrow(() -> new CustomException(NO_AUTH));
 
     Review review = reviewRepository.findByIdAndMemberEntityId(reviewId, member.getId())
-        .orElseThrow(() -> new NoSuchElementException("리뷰 id를 찾을 수 없습니다. id: " + reviewId));
+        .orElseThrow(() -> new CustomException(NOT_EXIST_REVIEW));
 
     return new ReviewResponseDto(review);
   }
 
   public List<ReviewResponseDto> findAllReviewsByUser(UserDetails userDetails) {
     MemberEntity member = memberJpaRepository.findByEmail(userDetails.getUsername())
-        .orElseThrow(() -> new IllegalArgumentException("잘못된 유저 이름 입니다."));
+        .orElseThrow(() -> new CustomException(NO_AUTH));
 
     // 유저가 작성한 모든 리뷰 조회
     List<Review> reviews = reviewRepository.findByMemberEntityId(member.getId());
@@ -101,29 +107,29 @@ public class ReviewService {
   public ReviewResponseDto updateReview(Long reviewId, ReviewRequestDto requestDto,
       UserDetails userDetails) {
     MemberEntity member = memberJpaRepository.findByEmail(userDetails.getUsername())
-        .orElseThrow(() -> new IllegalArgumentException("잘못된 유저 이름"));
+        .orElseThrow(() -> new CustomException(NO_AUTH));
 
     Review review = reviewRepository.findByIdAndMemberEntityId(reviewId, member.getId())
-        .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없거나 수정할 권한이 없습니다."));
+        .orElseThrow(() -> new CustomException(NOT_EXIST_REVIEW));
 
     review.setContents(requestDto.getContents());
     review.setScore(requestDto.getScore());
     review.setUpdatedDate(LocalDateTime.now());
 
-    reviewRepository.save(review);
+    reviewRepository.save(review); // 한번 테스트 해봐야겠다..
     return new ReviewResponseDto(review);
   }
 
   @Transactional
   public void deleteReview(Long reviewId, UserDetails userDetails) {
     MemberEntity member = memberJpaRepository.findByEmail(userDetails.getUsername())
-        .orElseThrow(() -> new IllegalArgumentException("잘못된 유저 이름"));
+        .orElseThrow(() -> new CustomException(NO_AUTH));
 
     Review review = reviewRepository.findByIdAndMemberEntityId(reviewId, member.getId())
-        .orElseThrow(() -> new IllegalArgumentException("삭제할 리뷰의 Id를 찾을 수 없습니다."));
+        .orElseThrow(() -> new CustomException(NOT_EXIST_REVIEW));
 
     review.setDeletedDate(LocalDateTime.now());
-    reviewRepository.save(review);
+    reviewRepository.save(review); // 요것도..
   }
 
 

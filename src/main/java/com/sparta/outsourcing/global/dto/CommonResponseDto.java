@@ -16,7 +16,7 @@ public class CommonResponseDto<T> {
   private T data;
 
   public static <T> ResponseEntity<CommonResponseDto<T>> ok(
-      String successMessage, // 후에 바꿀 예정
+      String successMessage,
       T data
   ) {
     return ResponseEntity.ok(

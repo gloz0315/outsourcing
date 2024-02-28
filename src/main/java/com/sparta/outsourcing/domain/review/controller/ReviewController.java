@@ -26,7 +26,6 @@ public class ReviewController {
 
   private final ReviewService reviewService;
 
-
   @PostMapping
   public ResponseEntity<ReviewResponseDto> createReview(@RequestBody ReviewRequestDto requestDto,
       @AuthenticationPrincipal UserDetails userDetails) {
