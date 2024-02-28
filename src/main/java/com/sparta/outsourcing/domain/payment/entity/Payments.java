@@ -23,14 +23,14 @@ import org.springframework.data.annotation.CreatedDate;
 @Table(name = "payments")
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "update payments set deleted = true,deleted_date = NOW() where payment_id= ?")
+@SQLDelete(sql = "update payments set deleted = true,deleted_date = NOW() where id= ?")
 public class Payments {
 
 
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long paymentId;
+  private Long id;
 
   @Column
   @NotNull

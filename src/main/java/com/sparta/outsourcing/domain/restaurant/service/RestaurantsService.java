@@ -1,7 +1,7 @@
 package com.sparta.outsourcing.domain.restaurant.service;
 
 import com.sparta.outsourcing.domain.member.model.MemberRole;
-import com.sparta.outsourcing.domain.member.repository.MemberRepository;
+import com.sparta.outsourcing.domain.member.repository.member.MemberRepository;
 import com.sparta.outsourcing.domain.restaurant.dto.RestaurantsRequestDto;
 import com.sparta.outsourcing.domain.restaurant.dto.RestaurantsResponseDto;
 import com.sparta.outsourcing.domain.restaurant.entity.Restaurants;
