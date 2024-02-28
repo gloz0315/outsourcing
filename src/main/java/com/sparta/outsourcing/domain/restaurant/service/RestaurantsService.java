@@ -1,5 +1,7 @@
 package com.sparta.outsourcing.domain.restaurant.service;
 
+import com.sparta.outsourcing.domain.member.model.MemberRole;
+import com.sparta.outsourcing.domain.member.repository.MemberRepository;
 import com.sparta.outsourcing.domain.restaurant.dto.RestaurantsRequestDto;
 import com.sparta.outsourcing.domain.restaurant.dto.RestaurantsResponseDto;
 import com.sparta.outsourcing.domain.restaurant.entity.Restaurants;
@@ -15,14 +17,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class RestaurantsService {
 
   private final RestaurantsRepository restaurantsRepository;
+  private final MemberRepository memberRepository;
 
   @Transactional
-  public RestaurantsResponseDto createRestaurant(RestaurantsRequestDto restaurantsRequestDto) {
+  public RestaurantsResponseDto createRestaurant(RestaurantsRequestDto restaurantsRequestDto,
+      String email) {
 
-    Restaurants restaurants = restaurantsRequestDto.toEntity();
-    restaurantsRepository.save(restaurants);
-    RestaurantsResponseDto restaurantsResponseDto = new RestaurantsResponseDto(restaurants);
-    //
+    RestaurantsResponseDto restaurantsResponseDto;
+    if (memberRepository.findMemberOrElseThrow(email).getRole().equals(MemberRole.ADMIN)) {
+      Restaurants restaurants = restaurantsRequestDto.toEntity();
+      restaurantsRepository.save(restaurants);
+      restaurantsResponseDto = new RestaurantsResponseDto(restaurants);
+    } else {
+      throw new RuntimeException("관리자만 개설할 수 있습니다");
+    }
     return restaurantsResponseDto;
   }
 
@@ -40,19 +48,30 @@ public class RestaurantsService {
   } // for each문이랑 유사
 
   @Transactional
-  public long deleteRestaurant(Long restaurantId) {
-    deleteByRestaurantId(restaurantId);
+  public long deleteRestaurant(Long restaurantId, String email) {
+    if (memberRepository.findMemberOrElseThrow(email).getRole().equals(MemberRole.ADMIN)) {
+      deleteByRestaurantId(restaurantId);
+    }
+    else {
+      throw new IllegalArgumentException("관리자만 삭제 할수 있습니다.");
+    }
     return restaurantId;
   }
 
   @Transactional
   public RestaurantsResponseDto updateRestaurant(Long restaurantId,
-      RestaurantsRequestDto restaurantsRequestDto) {
-    Restaurants restaurants = findByRestaurantId(restaurantId);
-    restaurants.update(restaurantsRequestDto);
-    Restaurants updatedRestaurant = restaurantsRepository.save(restaurants);
-    RestaurantsResponseDto restaurantsResponseDto = new RestaurantsResponseDto(updatedRestaurant);
-    return restaurantsResponseDto;
+      RestaurantsRequestDto restaurantsRequestDto, String email) {
+
+    if (memberRepository.findMemberOrElseThrow(email).getRole().equals(MemberRole.ADMIN)) {
+      Restaurants restaurants = findByRestaurantId(restaurantId);
+      restaurants.update(restaurantsRequestDto);
+      Restaurants updatedRestaurant = restaurantsRepository.save(restaurants);
+      RestaurantsResponseDto restaurantsResponseDto = new RestaurantsResponseDto(updatedRestaurant);
+      return restaurantsResponseDto;
+    } else {
+      throw new IllegalArgumentException("관리자만 수정할수 있습니다");
+    }
+
   }
 
   private void deleteByRestaurantId(Long restaurantId) {
