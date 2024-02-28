@@ -35,6 +35,7 @@ public class RestaurantsService {
   }
 
   public RestaurantsResponseDto getRestaurant(Long restaurantId) {
+
     Restaurants foundRestaurant = findByRestaurantId(restaurantId);
     RestaurantsResponseDto restaurantsResponseDto = new RestaurantsResponseDto(foundRestaurant);
     return restaurantsResponseDto;
