@@ -1,4 +1,4 @@
-package com.sparta.outsourcing.domain.member.repository;
+package com.sparta.outsourcing.domain.member.repository.member;
 
 import com.sparta.outsourcing.domain.member.model.entity.MemberEntity;
 import java.util.Optional;

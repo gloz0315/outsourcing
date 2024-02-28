@@ -1,7 +1,7 @@
 package com.sparta.outsourcing.global.security;
 
 import com.sparta.outsourcing.domain.member.model.Member;
-import com.sparta.outsourcing.domain.member.repository.MemberJpaRepository;
+import com.sparta.outsourcing.domain.member.repository.member.MemberJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
