@@ -3,6 +3,7 @@ package com.sparta.outsourcing.domain.order.service;
 import static com.sparta.outsourcing.global.exception.CustomError.EMPTY_BASKET;
 import static com.sparta.outsourcing.global.exception.CustomError.NOT_CANCEL_ORDER;
 import static com.sparta.outsourcing.global.exception.CustomError.NOT_CONTAIN_MENU;
+import static com.sparta.outsourcing.global.exception.CustomError.NOT_EXIST_PAYMENT;
 import static com.sparta.outsourcing.global.exception.CustomError.RESTAURANT_NOT_EXIST;
 
 import com.sparta.outsourcing.domain.basket.model.Basket;
@@ -105,7 +106,11 @@ public class OrderService {
 
     orderRepository.updatedCancel(orderId);
     orderRepository.deleteOrderAll(orderId);
-    //payments도 삭제해야함.
+
+    Payments payments = paymentsJpaRepository.findPaymentsByOrderId(orderId).orElseThrow(
+        () -> new CustomException(NOT_EXIST_PAYMENT)
+    );
+    paymentsJpaRepository.delete(payments);
   }
 
   private boolean isSingleRestaurantOrder(List<Basket> basketList) {
