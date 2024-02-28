@@ -3,19 +3,20 @@ package com.sparta.outsourcing.domain.member.service;
 import com.sparta.outsourcing.domain.favorite.model.entity.Favorite;
 import com.sparta.outsourcing.domain.favorite.repository.FavoriteRepository;
 import com.sparta.outsourcing.domain.member.controller.dto.SignupRequestDto;
+import com.sparta.outsourcing.domain.member.controller.dto.UpdatePasswordRequestDto;
 import com.sparta.outsourcing.domain.member.controller.dto.UpdateRequestDto;
 import com.sparta.outsourcing.domain.member.model.Member;
 import com.sparta.outsourcing.domain.member.model.MemberRole;
-import com.sparta.outsourcing.domain.member.repository.MemberRepository;
+import com.sparta.outsourcing.domain.member.repository.member.MemberRepository;
 import com.sparta.outsourcing.domain.member.service.dto.MemberInfoResponse;
 import com.sparta.outsourcing.domain.member.service.dto.MemberResponseDto;
 import com.sparta.outsourcing.domain.member.service.dto.MemberSignupDto;
 import com.sparta.outsourcing.domain.member.service.dto.UpdateDto;
+import com.sparta.outsourcing.domain.member.service.dto.UpdatePasswordDto;
 import com.sparta.outsourcing.domain.review.model.entity.Review;
 import com.sparta.outsourcing.domain.review.repository.ReviewRepository;
 import com.sparta.outsourcing.global.jwt.entity.RefreshTokenEntity;
 import com.sparta.outsourcing.global.jwt.repository.TokenRepository;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -59,13 +60,12 @@ public class MemberService {
     tokenRepository.deleteToken(refreshToken);
   }
 
-  // 멤버 조회 -> 리뷰, 좋아요 뭐가 있는지 확인
   @Transactional(readOnly = true)
   public MemberInfoResponse memberInfo(Long memberId) {
     Member member = memberRepository.findMemberOrElseThrow(memberId);
 
     List<Favorite> favoriteList = favoriteRepository.findAllByMemberId(member.getId());
-    List<Review> reviewList = new ArrayList<>(); // 리뷰 정보를 다 가져올 떄 됨
+    List<Review> reviewList = reviewRepository.findByMemberEntityId(member.getId());
     
     return MemberInfoResponse.builder()
         .memberId(member.getId())
@@ -94,5 +94,18 @@ public class MemberService {
     }
 
     throw new IllegalArgumentException("유저의 권한이 없습니다.");
+  }
+
+  public void updatePasswordMember(Long memberId, String email, UpdatePasswordRequestDto dto) {
+    Member member = memberRepository.findMemberOrElseThrow(email);
+
+    if (!member.checkId(memberId)) {
+      throw new IllegalArgumentException("해당 유저의 권한이 없습니다.");
+    }
+
+    UpdatePasswordDto updatePasswordDto = new UpdatePasswordDto(dto);
+    updatePasswordDto.checkChangePasswordEquals(); // 비밀번호 일치여부
+
+    memberRepository.updatePasswordMember(updatePasswordDto, member.getId());
   }
 }

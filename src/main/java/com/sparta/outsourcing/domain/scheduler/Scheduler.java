@@ -17,7 +17,7 @@ public class Scheduler {
   private final OrderRepository orderRepository;
 
   // 5분마다 전체적으로 배달의 상태를 변경, 처음 프로그램이 실행 후 10초 뒤에 시작
-  @Scheduled(fixedDelay = 300000, initialDelay = 10000)
+  @Scheduled(fixedDelay = 60000, initialDelay = 10000)
   @Transactional
   public void updateOrderType() {
     log.info("주문 상태 업데이트 실행");

@@ -1,6 +1,6 @@
 package com.sparta.outsourcing.domain.payment.controller;
 
-import com.sparta.outsourcing.domain.payment.dto.PaymentsRequestDto;
+
 import com.sparta.outsourcing.domain.payment.dto.PaymentsResponseDto;
 import com.sparta.outsourcing.domain.payment.entity.CommonResponse;
 import com.sparta.outsourcing.domain.payment.service.PaymentsService;
@@ -11,8 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,17 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class PaymentsController {
 
   private final PaymentsService paymentsService;
-
-  @PostMapping("/payments")
-  public ResponseEntity<CommonResponse<PaymentsResponseDto>> createPayment(
-      @RequestBody PaymentsRequestDto paymentsRequestDto) {
-    PaymentsResponseDto paymentsResponseDto = paymentsService.createPayment(paymentsRequestDto);
-
-    return ResponseEntity.ok().body(
-        CommonResponse.<PaymentsResponseDto>builder().code(HttpStatus.OK.value())
-            .message("결제가 완료되었습니다").data(paymentsResponseDto)
-            .build());
-  }
 
   @GetMapping("/payments/{paymentId}")
   public ResponseEntity<CommonResponse<PaymentsResponseDto>> getPayment(

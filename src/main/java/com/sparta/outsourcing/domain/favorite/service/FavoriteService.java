@@ -1,7 +1,7 @@
 package com.sparta.outsourcing.domain.favorite.service;
 
 import com.sparta.outsourcing.domain.member.model.entity.MemberEntity;
-import com.sparta.outsourcing.domain.member.repository.MemberJpaRepository;
+import com.sparta.outsourcing.domain.member.repository.member.MemberJpaRepository;
 import com.sparta.outsourcing.domain.restaurant.repository.RestaurantsRepository;
 import com.sparta.outsourcing.domain.favorite.model.dto.FavoriteRequestDto;
 import com.sparta.outsourcing.domain.favorite.model.dto.FavoriteResponseDto;

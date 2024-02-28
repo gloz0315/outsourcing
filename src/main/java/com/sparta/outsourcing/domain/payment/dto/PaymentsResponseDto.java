@@ -7,8 +7,6 @@ import lombok.Getter;
 public class PaymentsResponseDto {
   private Long paymentId;
   private Long orderId;
-  private Short count;
-  private Integer price;
   private Integer totalPrice;
   private LocalDateTime createdDate;
   private LocalDateTime deletedDate;
@@ -16,8 +14,6 @@ public class PaymentsResponseDto {
   public PaymentsResponseDto(Payments payments){
     this.paymentId = payments.getPaymentId();
     this.orderId = payments.getOrderId();
-    this.count = payments.getCount();
-    this.price = payments.getPrice();
     this.totalPrice = payments.getTotalPrice();
     this.createdDate = payments.getCreatedDate();
     this.deletedDate = payments.getDeletedDate();
