@@ -25,10 +25,6 @@ public class GlobalExceptionHandler {
   public ResponseEntity<CommonResponseDto<List<String>>> methodArgumentNotValidException(
       MethodArgumentNotValidException e
   ) {
-    return CommonResponseDto.of(
-        HttpStatus.BAD_REQUEST,
-       "잘못 입력하셨습니다.",
-        null
-    );
+    return CommonResponseDto.of(HttpStatus.BAD_REQUEST, "잘못 입력하셨습니다.", null);
   }
 }

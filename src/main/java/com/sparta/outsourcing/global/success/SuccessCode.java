@@ -32,6 +32,18 @@ public enum SuccessCode {
   SUCCESS_SEARCH_BASKET("장바구니 조회에 성공하였습니다."),
   SUCCESS_DELETE_BASKET("장바구니가 비워졌습니다."),
 
+  // 결제 성공 메세지
+  SUCCESS_SEARCH_PAYMENT("결제 조회가 완료되었습니다."),
+  SUCCESS_CANCEL_PAYMENT("결제 취소가 완료되었습니다."),
+
+  // 가게 성공 메세지
+  SUCCESS_CREATE_RESTAURANT("가게 생성을 완료하였습니다."),
+  SUCCESS_SEARCH_RESTAURANT("가게를 조회하였습니다."),
+  SUCCESS_UPDATE_RESTAURANT("가게를 수정하였습니다."),
+  SUCCESS_DELETE_RESTAURANT("가게를 삭제하였습니다."),
+
+
+
   ;
 
   private final String message;

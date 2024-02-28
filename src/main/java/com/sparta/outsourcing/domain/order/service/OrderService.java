@@ -1,6 +1,9 @@
 package com.sparta.outsourcing.domain.order.service;
 
-import static com.sparta.outsourcing.global.exception.CustomError.*;
+import static com.sparta.outsourcing.global.exception.CustomError.EMPTY_BASKET;
+import static com.sparta.outsourcing.global.exception.CustomError.NOT_CANCEL_ORDER;
+import static com.sparta.outsourcing.global.exception.CustomError.NOT_CONTAIN_MENU;
+import static com.sparta.outsourcing.global.exception.CustomError.RESTAURANT_NOT_EXIST;
 
 import com.sparta.outsourcing.domain.basket.model.Basket;
 import com.sparta.outsourcing.domain.basket.repository.BasketRepository;
@@ -20,9 +23,7 @@ import com.sparta.outsourcing.domain.order.service.dto.OrderResponseDto;
 import com.sparta.outsourcing.domain.payment.entity.Payments;
 import com.sparta.outsourcing.domain.payment.repository.PaymentsJpaRepository;
 import com.sparta.outsourcing.domain.restaurant.repository.RestaurantsRepository;
-import com.sparta.outsourcing.global.exception.CustomError;
 import com.sparta.outsourcing.global.exception.CustomException;
-import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -127,12 +128,8 @@ public class OrderService {
     int totalPrice = 0;
 
     for (Basket basket : basketList) {
-      int count = basket.getCount();
-      Long menuId = basket.getMenuId();
-      Menu menu = menuRepository.findByMenu(restaurantId, menuId);
-      int price = menu.getPrice();
-
-      totalPrice += count * price;
+      Menu menu = menuRepository.findByMenu(restaurantId, basket.getMenuId());
+      totalPrice += basket.getCount() * menu.getPrice();
     }
 
     Payments payments = Payments.builder()

@@ -6,6 +6,8 @@ import com.sparta.outsourcing.domain.restaurant.dto.RestaurantsRequestDto;
 import com.sparta.outsourcing.domain.restaurant.dto.RestaurantsResponseDto;
 import com.sparta.outsourcing.domain.restaurant.entity.Restaurants;
 import com.sparta.outsourcing.domain.restaurant.repository.RestaurantsRepository;
+import com.sparta.outsourcing.global.exception.CustomError;
+import com.sparta.outsourcing.global.exception.CustomException;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +31,7 @@ public class RestaurantsService {
       restaurantsRepository.save(restaurants);
       restaurantsResponseDto = new RestaurantsResponseDto(restaurants);
     } else {
-      throw new RuntimeException("관리자만 개설할 수 있습니다");
+      throw new CustomException(CustomError.NO_AUTH);
     }
     return restaurantsResponseDto;
   }
@@ -52,9 +54,8 @@ public class RestaurantsService {
   public long deleteRestaurant(Long restaurantId, String email) {
     if (memberRepository.findMemberOrElseThrow(email).getRole().equals(MemberRole.ADMIN)) {
       deleteByRestaurantId(restaurantId);
-    }
-    else {
-      throw new IllegalArgumentException("관리자만 삭제 할수 있습니다.");
+    } else {
+      throw new CustomException(CustomError.NO_AUTH);
     }
     return restaurantId;
   }
@@ -70,7 +71,7 @@ public class RestaurantsService {
       RestaurantsResponseDto restaurantsResponseDto = new RestaurantsResponseDto(updatedRestaurant);
       return restaurantsResponseDto;
     } else {
-      throw new IllegalArgumentException("관리자만 수정할수 있습니다");
+      throw new CustomException(CustomError.NO_AUTH);
     }
 
   }
@@ -79,7 +80,7 @@ public class RestaurantsService {
     Optional<Restaurants> restaurantsOptional = restaurantsRepository.findById(restaurantId);
 
     if (restaurantsOptional.isEmpty()) {
-      throw new IllegalArgumentException("삭제할 가게 정보가 존재하지 않습니다");
+      throw new CustomException(CustomError.RESTAURANT_NOT_EXIST);
     } else {
       restaurantsRepository.deleteById(restaurantId);
     }
@@ -87,6 +88,6 @@ public class RestaurantsService {
 
   private Restaurants findByRestaurantId(Long restaurantId) {
     return restaurantsRepository.findById(restaurantId)
-        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 가게입니다"));
+        .orElseThrow(() -> new CustomException(CustomError.RESTAURANT_NOT_EXIST));
   }
 }

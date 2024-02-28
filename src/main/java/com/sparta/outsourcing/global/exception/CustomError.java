@@ -37,6 +37,10 @@ public enum CustomError {
   NOT_EXIST_MENU("음식이 존재하지 않습니다."),
   ALREADY_EXIST_MENU("해당 음식이 존재합니다."),
 
+  // 결제에 대한 오류
+  NOT_EXIST_PAYMENT("결제 정보가 존재하지 않습니다."),
+
+  // JWT 토큰 에러
   EXPIRED_TOKEN("모든 토큰이 만료되었습니다.")
 
 
