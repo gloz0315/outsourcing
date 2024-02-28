@@ -3,7 +3,6 @@ package com.sparta.outsourcing.domain.payment.service;
 import com.sparta.outsourcing.domain.payment.dto.PaymentsResponseDto;
 import com.sparta.outsourcing.domain.payment.entity.Payments;
 import com.sparta.outsourcing.domain.payment.repository.PaymentsJpaRepository;
-import com.sparta.outsourcing.domain.payment.repository.PaymentsRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
