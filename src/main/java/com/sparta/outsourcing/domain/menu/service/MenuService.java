@@ -2,7 +2,7 @@ package com.sparta.outsourcing.domain.menu.service;
 
 import com.sparta.outsourcing.domain.member.model.Member;
 import com.sparta.outsourcing.domain.member.model.MemberRole;
-import com.sparta.outsourcing.domain.member.repository.MemberRepository;
+import com.sparta.outsourcing.domain.member.repository.member.MemberRepository;
 import com.sparta.outsourcing.domain.menu.controller.dto.MenuRequestDto;
 import com.sparta.outsourcing.domain.menu.controller.dto.MenuUpdateRequestDto;
 import com.sparta.outsourcing.domain.menu.model.Menu;
