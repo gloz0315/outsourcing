@@ -7,9 +7,9 @@
 
 ## 사용될 기술 및 툴
 ---
-협업 툴 - Slack, Github, ErdCloud, Figma, Notion
-개발 툴 - intellij
-개발시 사용 기술스택 - Spring security, jwt, Mysql, Spring
+- 협업 툴 - Slack, Github, ErdCloud, Figma, Notion
+- 개발 툴 - intellij
+- 개발시 사용 기술스택 - Spring security, jwt, Mysql, Spring
 
 ## 코드컨벤션
 ---
