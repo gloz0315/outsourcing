@@ -9,6 +9,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,8 +29,8 @@ public class RestaurantsController {
 
   @PostMapping("/restaurants")
   public ResponseEntity<CommonResponse<RestaurantsResponseDto>> createRestaurant(
-      @RequestBody RestaurantsRequestDto requestDto) {
-    RestaurantsResponseDto restaurantsResponseDto = restaurantsService.createRestaurant(requestDto);
+      @RequestBody RestaurantsRequestDto requestDto,@AuthenticationPrincipal UserDetails userDetails) {
+    RestaurantsResponseDto restaurantsResponseDto = restaurantsService.createRestaurant(requestDto,userDetails.getUsername());
 
     return ResponseEntity.ok().body(
         CommonResponse.<RestaurantsResponseDto>builder().code(HttpStatus.OK.value())
@@ -58,10 +60,10 @@ public class RestaurantsController {
   @PutMapping("/restaurants/{restaurantId}")
   public ResponseEntity<CommonResponse<RestaurantsResponseDto>> updateRestaurant(
       @PathVariable Long restaurantId,
-      @RequestBody RestaurantsRequestDto restaurantsRequestDto) {
+      @RequestBody RestaurantsRequestDto restaurantsRequestDto,@AuthenticationPrincipal UserDetails userDetails) {
 
     RestaurantsResponseDto restaurantsResponseDto = restaurantsService.updateRestaurant(
-        restaurantId, restaurantsRequestDto);
+        restaurantId, restaurantsRequestDto,userDetails.getUsername());
 
     return ResponseEntity.ok().body(
         CommonResponse.<RestaurantsResponseDto>builder().code(HttpStatus.OK.value())
@@ -69,8 +71,8 @@ public class RestaurantsController {
   }
 
   @DeleteMapping("/restaurants/{restaurantId}")
-  public ResponseEntity<CommonResponse> deleteRestaurant(@PathVariable Long restaurantId) {
-    restaurantsService.deleteRestaurant(restaurantId);
+  public ResponseEntity<CommonResponse> deleteRestaurant(@PathVariable Long restaurantId,@AuthenticationPrincipal UserDetails userDetails) {
+    restaurantsService.deleteRestaurant(restaurantId,userDetails.getUsername());
 
     return ResponseEntity.ok().body(
         CommonResponse.<String>builder().code(HttpStatus.OK.value())
