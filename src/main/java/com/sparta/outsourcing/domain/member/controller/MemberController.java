@@ -1,5 +1,7 @@
 package com.sparta.outsourcing.domain.member.controller;
 
+import static com.sparta.outsourcing.global.success.SuccessCode.*;
+
 import com.sparta.outsourcing.domain.member.controller.dto.SignupRequestDto;
 import com.sparta.outsourcing.domain.member.controller.dto.UpdatePasswordRequestDto;
 import com.sparta.outsourcing.domain.member.controller.dto.UpdateRequestDto;
@@ -34,7 +36,7 @@ public class MemberController {
       @Validated @RequestBody SignupRequestDto dto
   ) {
     MemberResponseDto responseDto = memberService.signup(dto);
-    return CommonResponseDto.ok("회원가입에 성공하셨습니다.", responseDto);
+    return CommonResponseDto.ok(SUCCESS_SIGNUP, responseDto);
   }
 
   @PostMapping("/logout")
@@ -42,7 +44,7 @@ public class MemberController {
       @AuthenticationPrincipal UserDetails userDetails
   ) {
     memberService.logout(userDetails);
-    return CommonResponseDto.ok("로그아웃에 성공하였습니다.", null);
+    return CommonResponseDto.ok(SUCCESS_LOGOUT, null);
   }
 
   @GetMapping("/{memberId}")
@@ -50,17 +52,17 @@ public class MemberController {
       @PathVariable("memberId") Long memberId
   ) {
     MemberInfoResponse response = memberService.memberInfo(memberId);
-    return CommonResponseDto.ok("조회에 성공하였습니다.", response);
+    return CommonResponseDto.ok(SUCCESS_SEARCH, response);
   }
 
   @PutMapping("/{memberId}")
   public ResponseEntity<CommonResponseDto<Void>> updateMember(
       @PathVariable("memberId") Long memberId,
       @AuthenticationPrincipal UserDetails userDetails,
-      @RequestBody UpdateRequestDto dto
+      @Validated @RequestBody UpdateRequestDto dto
   ) {
     memberService.updateMember(memberId, userDetails.getUsername(), dto);
-    return CommonResponseDto.ok("회원의 정보를 수정하였습니다.", null);
+    return CommonResponseDto.ok(SUCCESS_UPDATE_MEMBER, null);
   }
 
   @PatchMapping("/{memberId}")
@@ -70,7 +72,7 @@ public class MemberController {
       @Validated @RequestBody UpdatePasswordRequestDto dto
   ) {
     memberService.updatePasswordMember(memberId, userDetails.getUsername(), dto);
-    return CommonResponseDto.ok("비밀번호를 수정하였습니다.", null);
+    return CommonResponseDto.ok(SUCCESS_UPDATE_MEMBER_PASSWORD, null);
   }
 
   @DeleteMapping("/{memberId}")
@@ -79,6 +81,6 @@ public class MemberController {
       @AuthenticationPrincipal UserDetails userDetails
   ) {
     memberService.deleteMember(memberId, userDetails.getUsername());
-    return CommonResponseDto.ok("회원을 삭제하였습니다.", null);
+    return CommonResponseDto.ok(SUCCESS_DELETE_MEMBER, null);
   }
 }

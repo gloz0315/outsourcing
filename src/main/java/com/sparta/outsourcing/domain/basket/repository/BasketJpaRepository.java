@@ -8,5 +8,5 @@ public interface BasketJpaRepository extends JpaRepository<BasketEntity, Long> {
 
   List<BasketEntity> findBasketEntityByMemberId(Long memberId);
 
-  BasketEntity findFirstByMemberIdAndAndMenuId(Long memberId, Long menuId);
+  BasketEntity findFirstByMemberIdAndMenuId(Long memberId, Long menuId);
 }

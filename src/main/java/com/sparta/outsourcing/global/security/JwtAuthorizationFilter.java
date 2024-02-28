@@ -3,10 +3,12 @@ package com.sparta.outsourcing.global.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.outsourcing.domain.member.model.MemberRole;
 import com.sparta.outsourcing.global.dto.CommonResponseDto;
+import com.sparta.outsourcing.global.exception.CustomError;
 import com.sparta.outsourcing.global.jwt.JwtProvider;
 import com.sparta.outsourcing.global.jwt.TokenState;
 import com.sparta.outsourcing.global.jwt.entity.RefreshTokenEntity;
 import com.sparta.outsourcing.global.jwt.repository.TokenRepository;
+import com.sparta.outsourcing.global.success.SuccessCode;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -60,7 +62,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             res.addHeader(JwtProvider.AUTHORIZATION_ACCESS_TOKEN_HEADER_KEY, newAccessToken);
             res.setStatus(HttpServletResponse.SC_OK);
             String jsonResponse = objectMapper.writeValueAsString(
-                CommonResponseDto.ok("새로운 토큰이 발급되었습니다.", null));
+                CommonResponseDto.ok(SuccessCode.SUCCESS_NEW_TOKEN, null));
 
             res.setContentType("application/json");
             res.setCharacterEncoding("UTF-8");
@@ -70,7 +72,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
             String jsonResponse = objectMapper.writeValueAsString(
-                CommonResponseDto.unauthorizedRequest("모든 토큰이 만료되었습니다."));
+                CommonResponseDto.unauthorizedRequest(CustomError.EXPIRED_TOKEN.getMessage()));
             tokenRepository.deleteToken(refreshToken);
 
             res.setContentType("application/json");

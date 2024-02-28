@@ -1,5 +1,11 @@
 package com.sparta.outsourcing.domain.order.service;
 
+import static com.sparta.outsourcing.global.exception.CustomError.EMPTY_BASKET;
+import static com.sparta.outsourcing.global.exception.CustomError.NOT_CANCEL_ORDER;
+import static com.sparta.outsourcing.global.exception.CustomError.NOT_CONTAIN_MENU;
+import static com.sparta.outsourcing.global.exception.CustomError.NOT_EXIST_PAYMENT;
+import static com.sparta.outsourcing.global.exception.CustomError.RESTAURANT_NOT_EXIST;
+
 import com.sparta.outsourcing.domain.basket.model.Basket;
 import com.sparta.outsourcing.domain.basket.repository.BasketRepository;
 import com.sparta.outsourcing.domain.member.model.Member;
@@ -18,7 +24,7 @@ import com.sparta.outsourcing.domain.order.service.dto.OrderResponseDto;
 import com.sparta.outsourcing.domain.payment.entity.Payments;
 import com.sparta.outsourcing.domain.payment.repository.PaymentsJpaRepository;
 import com.sparta.outsourcing.domain.restaurant.repository.RestaurantsRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.sparta.outsourcing.global.exception.CustomException;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -44,11 +50,11 @@ public class OrderService {
     List<Basket> basketList = basketRepository.basketInfo(member.getId());
 
     if (basketList.isEmpty()) {
-      throw new IllegalArgumentException("장바구니가 비어있습니다.");
+      throw new CustomException(EMPTY_BASKET);
     }
 
     if (!isSingleRestaurantOrder(basketList)) {
-      throw new IllegalArgumentException("주문은 하나의 가게에만 할 수 있습니다.");
+      throw new CustomException(NOT_CONTAIN_MENU);
     }
 
     Long restaurantId = basketList.get(0).getRestaurantId();
@@ -74,7 +80,7 @@ public class OrderService {
         .stream().map(OrderDetailsEntity::toModel).toList();
 
     String restaurantName = restaurantsRepository.findById(order.getRestaurantId()).orElseThrow(
-        () -> new EntityNotFoundException("해당 가게가 존재하지 않습니다.")
+        () -> new CustomException(RESTAURANT_NOT_EXIST)
     ).getName();
 
     List<MenuInfoDto> menuInfoDtoList = orderDetailsList.stream().map(
@@ -95,12 +101,16 @@ public class OrderService {
     OrderType orderStatus = orderEntity.getOrderStatus();
 
     if (orderStatus.equals(OrderType.DELIVERY)) {
-      throw new IllegalArgumentException("현재 배달 중이므로 결제를 취소할 수 없습니다.");
+      throw new CustomException(NOT_CANCEL_ORDER);
     }
 
     orderRepository.updatedCancel(orderId);
     orderRepository.deleteOrderAll(orderId);
-    //payments도 삭제해야함.
+
+    Payments payments = paymentsJpaRepository.findPaymentsByOrderId(orderId).orElseThrow(
+        () -> new CustomException(NOT_EXIST_PAYMENT)
+    );
+    paymentsJpaRepository.delete(payments);
   }
 
   private boolean isSingleRestaurantOrder(List<Basket> basketList) {
@@ -123,12 +133,8 @@ public class OrderService {
     int totalPrice = 0;
 
     for (Basket basket : basketList) {
-      int count = basket.getCount();
-      Long menuId = basket.getMenuId();
-      Menu menu = menuRepository.findByMenu(restaurantId, menuId);
-      int price = menu.getPrice();
-
-      totalPrice += count * price;
+      Menu menu = menuRepository.findByMenu(restaurantId, basket.getMenuId());
+      totalPrice += basket.getCount() * menu.getPrice();
     }
 
     Payments payments = Payments.builder()

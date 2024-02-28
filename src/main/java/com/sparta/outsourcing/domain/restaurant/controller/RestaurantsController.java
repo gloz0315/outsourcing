@@ -1,6 +1,11 @@
 package com.sparta.outsourcing.domain.restaurant.controller;
 
 
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_CREATE_RESTAURANT;
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_DELETE_RESTAURANT;
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_SEARCH_RESTAURANT;
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_UPDATE_RESTAURANT;
+
 import com.sparta.outsourcing.domain.restaurant.dto.RestaurantsRequestDto;
 import com.sparta.outsourcing.domain.restaurant.dto.RestaurantsResponseDto;
 import com.sparta.outsourcing.domain.restaurant.entity.CommonResponse;
@@ -29,12 +34,14 @@ public class RestaurantsController {
 
   @PostMapping("/restaurants")
   public ResponseEntity<CommonResponse<RestaurantsResponseDto>> createRestaurant(
-      @RequestBody RestaurantsRequestDto requestDto,@AuthenticationPrincipal UserDetails userDetails) {
-    RestaurantsResponseDto restaurantsResponseDto = restaurantsService.createRestaurant(requestDto,userDetails.getUsername());
+      @RequestBody RestaurantsRequestDto requestDto,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    RestaurantsResponseDto restaurantsResponseDto = restaurantsService.createRestaurant(requestDto,
+        userDetails.getUsername());
 
     return ResponseEntity.ok().body(
         CommonResponse.<RestaurantsResponseDto>builder().code(HttpStatus.OK.value())
-            .message("가게 생성이 완료되었습니다").data(restaurantsResponseDto).build());
+            .message(SUCCESS_CREATE_RESTAURANT.getMessage()).data(restaurantsResponseDto).build());
   }
 
   @GetMapping("/restaurants/{restaurantId}")
@@ -44,7 +51,7 @@ public class RestaurantsController {
 
     return ResponseEntity.ok().body(
         CommonResponse.<RestaurantsResponseDto>builder().code(HttpStatus.OK.value())
-            .message("가게 단건 조회가 완료되었습니다").data(restaurantsResponseDto).build());
+            .message(SUCCESS_SEARCH_RESTAURANT.getMessage()).data(restaurantsResponseDto).build());
   }
 
   @GetMapping("/restaurants")
@@ -53,29 +60,31 @@ public class RestaurantsController {
 
     return ResponseEntity.ok().body(
         CommonResponse.<List<RestaurantsResponseDto>>builder().code(HttpStatus.OK.value())
-            .message("가게 전체 조회가 완료되었습니다").data(restaurantsResponseDto).build());
+            .message(SUCCESS_SEARCH_RESTAURANT.getMessage()).data(restaurantsResponseDto).build());
   }
 
 
   @PutMapping("/restaurants/{restaurantId}")
   public ResponseEntity<CommonResponse<RestaurantsResponseDto>> updateRestaurant(
       @PathVariable Long restaurantId,
-      @RequestBody RestaurantsRequestDto restaurantsRequestDto,@AuthenticationPrincipal UserDetails userDetails) {
+      @RequestBody RestaurantsRequestDto restaurantsRequestDto,
+      @AuthenticationPrincipal UserDetails userDetails) {
 
     RestaurantsResponseDto restaurantsResponseDto = restaurantsService.updateRestaurant(
-        restaurantId, restaurantsRequestDto,userDetails.getUsername());
+        restaurantId, restaurantsRequestDto, userDetails.getUsername());
 
     return ResponseEntity.ok().body(
         CommonResponse.<RestaurantsResponseDto>builder().code(HttpStatus.OK.value())
-            .message("가게 수정이 완료되었습니다").data(restaurantsResponseDto).build());
+            .message(SUCCESS_UPDATE_RESTAURANT.getMessage()).data(restaurantsResponseDto).build());
   }
 
   @DeleteMapping("/restaurants/{restaurantId}")
-  public ResponseEntity<CommonResponse> deleteRestaurant(@PathVariable Long restaurantId,@AuthenticationPrincipal UserDetails userDetails) {
-    restaurantsService.deleteRestaurant(restaurantId,userDetails.getUsername());
+  public ResponseEntity<CommonResponse> deleteRestaurant(@PathVariable Long restaurantId,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    restaurantsService.deleteRestaurant(restaurantId, userDetails.getUsername());
 
     return ResponseEntity.ok().body(
         CommonResponse.<String>builder().code(HttpStatus.OK.value())
-            .message("가게 삭제가 완료되었습니다").build());
+            .message(SUCCESS_DELETE_RESTAURANT.getMessage()).build());
   }
 }

@@ -1,6 +1,7 @@
 package com.sparta.outsourcing.global.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.sparta.outsourcing.global.success.SuccessCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -16,11 +17,11 @@ public class CommonResponseDto<T> {
   private T data;
 
   public static <T> ResponseEntity<CommonResponseDto<T>> ok(
-      String successMessage, // 후에 바꿀 예정
+      SuccessCode code,
       T data
   ) {
     return ResponseEntity.ok(
-        new CommonResponseDto<>(HttpStatus.OK, successMessage, data));
+        new CommonResponseDto<>(HttpStatus.OK, code.getMessage(), data));
   }
 
   public static <T> ResponseEntity<CommonResponseDto<T>> badRequest(String message) {

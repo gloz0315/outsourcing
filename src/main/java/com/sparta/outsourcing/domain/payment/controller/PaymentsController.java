@@ -1,6 +1,9 @@
 package com.sparta.outsourcing.domain.payment.controller;
 
 
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_CANCEL_PAYMENT;
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_SEARCH_PAYMENT;
+
 import com.sparta.outsourcing.domain.payment.dto.PaymentsResponseDto;
 import com.sparta.outsourcing.domain.payment.entity.CommonResponse;
 import com.sparta.outsourcing.domain.payment.service.PaymentsService;
@@ -11,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,7 +30,7 @@ public class PaymentsController {
     PaymentsResponseDto paymentsResponseDto = paymentsService.getPayment(paymentId);
     return ResponseEntity.ok().body(
         CommonResponse.<PaymentsResponseDto>builder().code(HttpStatus.OK.value())
-            .message("결제 단건 조회가 완료되었습니다").data(paymentsResponseDto).build());
+            .message(SUCCESS_SEARCH_PAYMENT.getMessage()).data(paymentsResponseDto).build());
   }
 
   @GetMapping("/payments")
@@ -37,7 +39,7 @@ public class PaymentsController {
 
     return ResponseEntity.ok().body(
         CommonResponse.<List<PaymentsResponseDto>>builder().code(HttpStatus.OK.value())
-            .message("결제 전체 조회가 완료되었습니다").data(paymentsResponseDto).build());
+            .message(SUCCESS_SEARCH_PAYMENT.getMessage()).data(paymentsResponseDto).build());
   }
 
   @DeleteMapping("/payments/{paymentId}")
@@ -47,6 +49,6 @@ public class PaymentsController {
 
     return ResponseEntity.ok().body(
         CommonResponse.<PaymentsResponseDto>builder().code(HttpStatus.OK.value())
-            .message("결제 취소가 완료되었습니다").build());
+            .message(SUCCESS_CANCEL_PAYMENT.getMessage()).build());
   }
 }

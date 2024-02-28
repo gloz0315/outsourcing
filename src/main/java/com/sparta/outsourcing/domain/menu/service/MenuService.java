@@ -1,5 +1,9 @@
 package com.sparta.outsourcing.domain.menu.service;
 
+import static com.sparta.outsourcing.global.exception.CustomError.ALREADY_EXIST_MENU;
+import static com.sparta.outsourcing.global.exception.CustomError.NO_AUTH;
+import static com.sparta.outsourcing.global.exception.CustomError.RESTAURANT_NOT_EXIST;
+
 import com.sparta.outsourcing.domain.member.model.Member;
 import com.sparta.outsourcing.domain.member.model.MemberRole;
 import com.sparta.outsourcing.domain.member.repository.member.MemberRepository;
@@ -10,7 +14,7 @@ import com.sparta.outsourcing.domain.menu.model.MenuType;
 import com.sparta.outsourcing.domain.menu.repository.MenuRepository;
 import com.sparta.outsourcing.domain.menu.service.dto.MenuResponseDto;
 import com.sparta.outsourcing.domain.restaurant.repository.RestaurantsRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.sparta.outsourcing.global.exception.CustomException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,15 +35,15 @@ public class MenuService {
     MenuType.checkMenuType(dto.getCategory());
 
     if (member.getRole().equals(MemberRole.USER)) {
-      throw new IllegalArgumentException("접근 권한이 없습니다.");
+      throw new CustomException(NO_AUTH);
     }
 
     if (restaurantsRepository.findById(dto.getRestaurantId()).isEmpty()) {
-      throw new EntityNotFoundException("해당 가게는 존재하지 않습니다.");
+      throw new CustomException(RESTAURANT_NOT_EXIST);
     }
 
     if (menuRepository.findByRestaurantIdAndName(dto.getRestaurantId(), dto.getName())) {
-      throw new IllegalArgumentException("이미 해당 음식점에 음식이 존재합니다.");
+      throw new CustomException(ALREADY_EXIST_MENU);
     }
 
     Menu menu = menuRepository.createMenu(dto);
@@ -57,7 +61,7 @@ public class MenuService {
   @Transactional(readOnly = true)
   public List<MenuResponseDto> getMenus(Long restaurantId) {
     if (restaurantsRepository.findById(restaurantId).isEmpty()) {
-      throw new EntityNotFoundException("해당 가게는 존재하지 않습니다.");
+      throw new CustomException(RESTAURANT_NOT_EXIST);
     }
 
     List<Menu> menuList = menuRepository.findByRestaurantId(restaurantId);
@@ -76,7 +80,7 @@ public class MenuService {
   @Transactional(readOnly = true)
   public MenuResponseDto getMenu(Long restaurantId, Long menuId) {
     if (restaurantsRepository.findById(restaurantId).isEmpty()) {
-      throw new EntityNotFoundException("해당 가게는 존재하지 않습니다.");
+      throw new CustomException(RESTAURANT_NOT_EXIST);
     }
 
     Menu menu = menuRepository.findByMenu(restaurantId, menuId);
@@ -97,11 +101,11 @@ public class MenuService {
     MenuType.checkMenuType(dto.getCategory());
 
     if (member.getRole().equals(MemberRole.USER)) {
-      throw new IllegalArgumentException("접근 권한이 없습니다.");
+      throw new CustomException(NO_AUTH);
     }
 
     if (restaurantsRepository.findById(restaurantId).isEmpty()) {
-      throw new EntityNotFoundException("해당 가게는 존재하지 않습니다.");
+      throw new CustomException(RESTAURANT_NOT_EXIST);
     }
 
     Menu menu = menuRepository.updateMenu(dto, menuId);
@@ -120,7 +124,7 @@ public class MenuService {
     Member member = memberRepository.findMemberOrElseThrow(email);
 
     if (member.getRole().equals(MemberRole.USER)) {
-      throw new IllegalArgumentException("접근 권한이 없습니다.");
+      throw new CustomException(NO_AUTH);
     }
 
     menuRepository.deleteMenu(restaurantId, menuId);

@@ -1,10 +1,12 @@
 package com.sparta.outsourcing.domain.order.repository;
 
+import static com.sparta.outsourcing.global.exception.CustomError.NOT_EXIST_ORDER;
+
 import com.sparta.outsourcing.domain.basket.model.Basket;
 import com.sparta.outsourcing.domain.order.model.OrderType;
 import com.sparta.outsourcing.domain.order.model.entity.OrderDetailsEntity;
 import com.sparta.outsourcing.domain.order.model.entity.OrderEntity;
-import jakarta.persistence.EntityNotFoundException;
+import com.sparta.outsourcing.global.exception.CustomException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -39,7 +41,7 @@ public class OrderRepositoryImpl implements OrderRepository {
   @Override
   public OrderEntity findByOrderId(Long orderId) {
     return orderJpaRepository.findById(orderId).orElseThrow(
-        () -> new EntityNotFoundException("해당 주문 정보가 존재하지 않습니다.")
+        () -> new CustomException(NOT_EXIST_ORDER)
     );
   }
 

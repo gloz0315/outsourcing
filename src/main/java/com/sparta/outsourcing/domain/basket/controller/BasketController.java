@@ -1,5 +1,7 @@
 package com.sparta.outsourcing.domain.basket.controller;
 
+import static com.sparta.outsourcing.global.success.SuccessCode.*;
+
 import com.sparta.outsourcing.domain.basket.service.BasketService;
 import com.sparta.outsourcing.domain.basket.service.dto.BasketRequestDto;
 import com.sparta.outsourcing.domain.basket.service.dto.BasketResponseDto;
@@ -29,7 +31,7 @@ public class BasketController {
       @RequestBody BasketRequestDto dto
   ) {
     BasketResponseDto responseDto = basketService.inputBasket(userDetails, dto);
-    return CommonResponseDto.ok("장바구니에 담겨졌습니다.", responseDto);
+    return CommonResponseDto.ok(SUCCESS_CONTAIN, responseDto);
   }
 
   @GetMapping
@@ -37,7 +39,7 @@ public class BasketController {
       @AuthenticationPrincipal UserDetails userDetails
   ) {
     List<BasketResponseDto> responseDtoList = basketService.getBasketInfo(userDetails);
-    return CommonResponseDto.ok("장바구니 조회에 성공하였습니다.", responseDtoList);
+    return CommonResponseDto.ok(SUCCESS_SEARCH_BASKET, responseDtoList);
   }
 
   @DeleteMapping
@@ -45,6 +47,6 @@ public class BasketController {
       @AuthenticationPrincipal UserDetails userDetails
   ) {
     basketService.deleteBasket(userDetails.getUsername());
-    return CommonResponseDto.ok("장바구니가 비워졌습니다.", null);
+    return CommonResponseDto.ok(SUCCESS_DELETE_BASKET, null);
   }
 }

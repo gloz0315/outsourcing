@@ -1,5 +1,8 @@
 package com.sparta.outsourcing.domain.member.service;
 
+import static com.sparta.outsourcing.global.exception.CustomError.MEMBER_EXISTS;
+import static com.sparta.outsourcing.global.exception.CustomError.NO_AUTH;
+
 import com.sparta.outsourcing.domain.favorite.model.entity.Favorite;
 import com.sparta.outsourcing.domain.favorite.repository.FavoriteRepository;
 import com.sparta.outsourcing.domain.member.controller.dto.SignupRequestDto;
@@ -15,6 +18,7 @@ import com.sparta.outsourcing.domain.member.service.dto.UpdateDto;
 import com.sparta.outsourcing.domain.member.service.dto.UpdatePasswordDto;
 import com.sparta.outsourcing.domain.review.model.entity.Review;
 import com.sparta.outsourcing.domain.review.repository.ReviewRepository;
+import com.sparta.outsourcing.global.exception.CustomException;
 import com.sparta.outsourcing.global.jwt.entity.RefreshTokenEntity;
 import com.sparta.outsourcing.global.jwt.repository.TokenRepository;
 import java.util.List;
@@ -43,7 +47,7 @@ public class MemberService {
         .build();
 
     if (memberRepository.checkEmail(info.getEmail())) {
-      throw new IllegalArgumentException("해당 유저가 존재합니다.");
+      throw new CustomException(MEMBER_EXISTS);
     }
 
     memberRepository.signIn(info);
@@ -66,7 +70,7 @@ public class MemberService {
 
     List<Favorite> favoriteList = favoriteRepository.findAllByMemberId(member.getId());
     List<Review> reviewList = reviewRepository.findByMemberEntityId(member.getId());
-    
+
     return MemberInfoResponse.builder()
         .memberId(member.getId())
         .favoriteList(favoriteList)
@@ -78,7 +82,7 @@ public class MemberService {
     Member member = memberRepository.findMemberOrElseThrow(email);
 
     if (!member.checkId(memberId)) {
-      throw new IllegalArgumentException("해당 유저의 권한이 없습니다.");
+      throw new CustomException(NO_AUTH);
     }
 
     UpdateDto updateDto = new UpdateDto(dto);
@@ -88,23 +92,23 @@ public class MemberService {
   public void deleteMember(Long memberId, String username) {
     Member member = memberRepository.findMemberOrElseThrow(username);
 
-    if(member.getRole().equals(MemberRole.ADMIN) || member.checkId(memberId)) {
+    if (member.getRole().equals(MemberRole.ADMIN) || member.checkId(memberId)) {
       memberRepository.deleteMember(memberId);
       return;
     }
 
-    throw new IllegalArgumentException("유저의 권한이 없습니다.");
+    throw new CustomException(NO_AUTH);
   }
 
   public void updatePasswordMember(Long memberId, String email, UpdatePasswordRequestDto dto) {
     Member member = memberRepository.findMemberOrElseThrow(email);
 
     if (!member.checkId(memberId)) {
-      throw new IllegalArgumentException("해당 유저의 권한이 없습니다.");
+      throw new CustomException(NO_AUTH);
     }
 
     UpdatePasswordDto updatePasswordDto = new UpdatePasswordDto(dto);
-    updatePasswordDto.checkChangePasswordEquals(); // 비밀번호 일치여부
+    updatePasswordDto.checkChangePasswordEquals();
 
     memberRepository.updatePasswordMember(updatePasswordDto, member.getId());
   }

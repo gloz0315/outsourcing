@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.outsourcing.domain.member.controller.dto.LoginRequestDto;
 import com.sparta.outsourcing.domain.member.model.Member;
 import com.sparta.outsourcing.global.dto.CommonResponseDto;
+import com.sparta.outsourcing.global.exception.CustomError;
 import com.sparta.outsourcing.global.jwt.JwtProvider;
 import com.sparta.outsourcing.global.jwt.repository.TokenRepository;
+import com.sparta.outsourcing.global.success.SuccessCode;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -63,7 +65,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     response.setStatus(HttpServletResponse.SC_OK);
 
     String jsonResponse = objectMapper.writeValueAsString(
-        CommonResponseDto.ok("로그인 성공하였습니다", null));
+        CommonResponseDto.ok(SuccessCode.SUCCESS_LOGIN, null));
 
     response.setContentType("application/json");
     response.setCharacterEncoding("UTF-8");
@@ -76,7 +78,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
     String jsonResponse = objectMapper.writeValueAsString(
-        CommonResponseDto.badRequest("로그인 실패하셨습니다."));
+        CommonResponseDto.badRequest(CustomError.ERROR_LOGIN.getMessage()));
 
     response.setContentType("application/json");
     response.setCharacterEncoding("UTF-8");

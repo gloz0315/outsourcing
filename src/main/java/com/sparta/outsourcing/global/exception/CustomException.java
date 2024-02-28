@@ -6,7 +6,7 @@ import lombok.Getter;
 public class CustomException extends RuntimeException {
   private final String message;
 
-  public CustomException(JwtError error) {
+  public CustomException(CustomError error) {
     this.message = error.getMessage();
   }
 
