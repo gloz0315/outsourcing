@@ -59,7 +59,7 @@ public class MemberController {
   public ResponseEntity<CommonResponseDto<Void>> updateMember(
       @PathVariable("memberId") Long memberId,
       @AuthenticationPrincipal UserDetails userDetails,
-      @RequestBody UpdateRequestDto dto
+      @Validated @RequestBody UpdateRequestDto dto
   ) {
     memberService.updateMember(memberId, userDetails.getUsername(), dto);
     return CommonResponseDto.ok(SUCCESS_UPDATE_MEMBER, null);
