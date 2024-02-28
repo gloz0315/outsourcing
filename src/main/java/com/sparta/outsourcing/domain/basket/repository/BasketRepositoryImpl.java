@@ -14,7 +14,7 @@ public class BasketRepositoryImpl implements BasketRepository {
 
   @Override
   public void register(Basket basket) {
-    BasketEntity basketInfo = basketJpaRepository.findFirstByMemberIdAndAndMenuId(
+    BasketEntity basketInfo = basketJpaRepository.findFirstByMemberIdAndMenuId(
         basket.getMemberId(), basket.getMenuId());
 
     if (basketInfo == null) {
