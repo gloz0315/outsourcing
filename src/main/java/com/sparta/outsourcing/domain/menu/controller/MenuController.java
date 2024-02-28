@@ -1,5 +1,7 @@
 package com.sparta.outsourcing.domain.menu.controller;
 
+import static com.sparta.outsourcing.global.success.SuccessCode.*;
+
 import com.sparta.outsourcing.domain.menu.controller.dto.MenuRequestDto;
 import com.sparta.outsourcing.domain.menu.controller.dto.MenuUpdateRequestDto;
 import com.sparta.outsourcing.domain.menu.service.MenuService;
@@ -34,7 +36,7 @@ public class MenuController {
       @Valid @RequestBody MenuRequestDto dto
   ) {
     MenuResponseDto responseDto = menuService.createMenu(userDetails.getUsername(), dto);
-    return CommonResponseDto.ok("음식을 생성하였습니다.", responseDto);
+    return CommonResponseDto.ok(SUCCESS_CREATE_MENU, responseDto);
   }
 
   @GetMapping("/{restaurantId}")
@@ -42,7 +44,7 @@ public class MenuController {
       @PathVariable("restaurantId") Long restaurantId
   ) {
     List<MenuResponseDto> responseDtoList = menuService.getMenus(restaurantId);
-    return CommonResponseDto.ok("음식을 조회하였습니다", responseDtoList);
+    return CommonResponseDto.ok(SUCCESS_SEARCH_MENU, responseDtoList);
   }
 
   @GetMapping("/{restaurantId}/{menuId}")
@@ -51,7 +53,7 @@ public class MenuController {
       @PathVariable("menuId") Long menuId
   ) {
     MenuResponseDto responseDto = menuService.getMenu(restaurantId, menuId);
-    return CommonResponseDto.ok("음식을 조회하였습니다.", responseDto);
+    return CommonResponseDto.ok(SUCCESS_SEARCH_MENU, responseDto);
   }
 
   @PutMapping("/{restaurantId}/{menuId}")
@@ -63,7 +65,7 @@ public class MenuController {
   ) {
     MenuResponseDto responseDto = menuService.updateMenu(userDetails.getUsername(), restaurantId,
         menuId, dto);
-    return CommonResponseDto.ok("음식을 수정하였습니다.", responseDto);
+    return CommonResponseDto.ok(SUCCESS_UPDATE_MENU, responseDto);
   }
 
   @DeleteMapping("/{restaurantId}/{menuId}")
@@ -73,6 +75,6 @@ public class MenuController {
       @PathVariable("menuId") Long menuId
   ) {
     menuService.deleteMenu(userDetails.getUsername(), restaurantId, menuId);
-    return CommonResponseDto.ok("음식을 삭제하였습니다.", null);
+    return CommonResponseDto.ok(SUCCESS_DELETE_MENU, null);
   }
 }

@@ -12,6 +12,7 @@ public enum CustomError {
   PASSWORD_ERROR("비밀번호가 일치하지 않습니다."),
   CHANGE_PASSWORD_ERROR("변경할 비밀번호가 서로 일치하지 않습니다."),
   CURRENT_PASSWORD_ERROR("최근에 해당 비밀번호로 변경한 적이 있습니다."),
+  ERROR_LOGIN("로그인에 실패하였습니다."),
 
   // 가게에 대한 오류
   RESTAURANT_NOT_EXIST("가게가 존재하지 않습니다."),
@@ -35,6 +36,8 @@ public enum CustomError {
   NOT_EXIST_MENU_TYPE("음식의 종류가 존재하지 않습니다."),
   NOT_EXIST_MENU("음식이 존재하지 않습니다."),
   ALREADY_EXIST_MENU("해당 음식이 존재합니다."),
+
+  EXPIRED_TOKEN("모든 토큰이 만료되었습니다.")
 
 
   ;

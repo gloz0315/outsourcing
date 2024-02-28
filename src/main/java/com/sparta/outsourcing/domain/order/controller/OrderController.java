@@ -1,5 +1,9 @@
 package com.sparta.outsourcing.domain.order.controller;
 
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_CANCEL;
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_ORDER;
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_SEARCH_ORDER;
+
 import com.sparta.outsourcing.domain.order.service.OrderService;
 import com.sparta.outsourcing.domain.order.service.dto.OrderInfoResponse;
 import com.sparta.outsourcing.domain.order.service.dto.OrderResponseDto;
@@ -27,7 +31,7 @@ public class OrderController {
       @PathVariable("orderId") Long orderId
   ) {
     OrderInfoResponse orderInfoResponse = orderService.orderInfo(orderId);
-    return CommonResponseDto.ok("주문 조회 성공하였습니다.", orderInfoResponse);
+    return CommonResponseDto.ok(SUCCESS_SEARCH_ORDER, orderInfoResponse);
   }
 
   @PostMapping
@@ -35,7 +39,7 @@ public class OrderController {
       @AuthenticationPrincipal UserDetails userDetails
   ) {
     OrderResponseDto orderResponseDto = orderService.order(userDetails);
-    return CommonResponseDto.ok("주문 성공하였습니다.", orderResponseDto);
+    return CommonResponseDto.ok(SUCCESS_ORDER, orderResponseDto);
   }
 
   @DeleteMapping("/{orderId}")
@@ -43,6 +47,6 @@ public class OrderController {
       @PathVariable("orderId") Long orderId
   ) {
     orderService.orderDelete(orderId);
-    return CommonResponseDto.ok("결제 취소가 되었습니다.", null);
+    return CommonResponseDto.ok(SUCCESS_CANCEL, null);
   }
 }

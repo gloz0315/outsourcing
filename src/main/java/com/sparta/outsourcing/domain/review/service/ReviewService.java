@@ -116,7 +116,7 @@ public class ReviewService {
     review.setScore(requestDto.getScore());
     review.setUpdatedDate(LocalDateTime.now());
 
-    reviewRepository.save(review); // 한번 테스트 해봐야겠다..
+    reviewRepository.save(review);
     return new ReviewResponseDto(review);
   }
 
@@ -129,7 +129,7 @@ public class ReviewService {
         .orElseThrow(() -> new CustomException(NOT_EXIST_REVIEW));
 
     review.setDeletedDate(LocalDateTime.now());
-    reviewRepository.save(review); // 요것도..
+    reviewRepository.save(review);
   }
 
 
