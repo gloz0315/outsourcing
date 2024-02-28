@@ -56,7 +56,8 @@ public class ReviewService {
 
     // 응답 생성
     return new ReviewResponseDto(review.getId(), review.getContents(), review.getScore(),
-        review.getMemberEntityId(), review.getRestaurantId(), review.getMenuId(), review.getCreatedDate(),
+        review.getMemberEntityId(), review.getRestaurantId(), review.getMenuId(),
+        review.getCreatedDate(),
         review.getUpdatedDate());
   }
 
@@ -103,8 +104,14 @@ public class ReviewService {
     MemberEntity member = memberJpaRepository.findByEmail(userDetails.getUsername())
         .orElseThrow(() -> new IllegalArgumentException("잘못된 유저 이름"));
 
-    Review review = reviewRepository.findByIdAndMemberEntityId(reviewId, member.getId())
-        .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없거나 수정할 권한이 없습니다."));
+    Restaurants restaurant = restaurantsRepository.findById(requestDto.getRestaurantId())
+        .orElseThrow(() -> new IllegalArgumentException("잘못된 레스토랑 id 입니다."));
+    MenuEntity menu = menuJpaRepository.findById(requestDto.getMenuId())
+        .orElseThrow(() -> new IllegalArgumentException("잘못된 메뉴 id 입니다."));
+
+    Review review = reviewRepository.findByIdAndMemberEntityIdAndRestaurantIdAndMenuId(
+            reviewId, member.getId(), restaurant.getRestaurantId(), menu.getId())
+        .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없거나 권한이 없습니다."));
 
     review.setContents(requestDto.getContents());
     review.setScore(requestDto.getScore());
