@@ -1,5 +1,7 @@
 package com.sparta.outsourcing.domain.basket.service;
 
+import static com.sparta.outsourcing.global.exception.CustomError.*;
+
 import com.sparta.outsourcing.domain.basket.model.Basket;
 import com.sparta.outsourcing.domain.basket.repository.BasketRepository;
 import com.sparta.outsourcing.domain.basket.service.dto.BasketRequestDto;
@@ -8,6 +10,8 @@ import com.sparta.outsourcing.domain.member.model.Member;
 import com.sparta.outsourcing.domain.member.repository.member.MemberRepository;
 import com.sparta.outsourcing.domain.menu.repository.MenuRepository;
 import com.sparta.outsourcing.domain.restaurant.repository.RestaurantsRepository;
+import com.sparta.outsourcing.global.exception.CustomError;
+import com.sparta.outsourcing.global.exception.CustomException;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +28,11 @@ public class BasketService {
   private final MemberRepository memberRepository;
   private final RestaurantsRepository restaurantsRepository;
   private final MenuRepository menuRepository;
-  // 메뉴 레파지토리 또한 설정해야함
 
   public BasketResponseDto inputBasket(UserDetails userDetails, BasketRequestDto dto) {
     Member member = memberRepository.findMemberOrElseThrow(userDetails.getUsername());
     restaurantsRepository.findById(dto.getRestaurantId()).orElseThrow(
-        () -> new EntityNotFoundException("해당 가게 정보가 없습니다.")
+        () -> new CustomException(RESTAURANT_NOT_EXIST)
     );
 
     menuRepository.findByMenu(dto.getRestaurantId(), dto.getMenuId());

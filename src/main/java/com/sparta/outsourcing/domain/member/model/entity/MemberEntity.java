@@ -1,11 +1,13 @@
 package com.sparta.outsourcing.domain.member.model.entity;
 
 import static com.sparta.outsourcing.domain.member.model.MemberRole.USER;
+import static com.sparta.outsourcing.global.exception.CustomError.PASSWORD_EQUALS;
 
 import com.sparta.outsourcing.domain.common.entity.Timestamped;
 import com.sparta.outsourcing.domain.member.model.Member;
 import com.sparta.outsourcing.domain.member.model.MemberRole;
 import com.sparta.outsourcing.domain.member.service.dto.UpdateDto;
+import com.sparta.outsourcing.global.exception.CustomException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -88,7 +90,7 @@ public class MemberEntity extends Timestamped {
 
   public void updatePassword(String password) {
     if (password.equals(this.password)) {
-      throw new IllegalArgumentException("현재 비밀번호 입니다.");
+      throw new CustomException(PASSWORD_EQUALS);
     }
 
     this.password = password;

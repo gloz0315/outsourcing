@@ -1,5 +1,9 @@
 package com.sparta.outsourcing.domain.member.repository.member;
 
+import static com.sparta.outsourcing.global.exception.CustomError.CURRENT_PASSWORD_ERROR;
+import static com.sparta.outsourcing.global.exception.CustomError.MEMBER_NOT_EXISTS;
+import static com.sparta.outsourcing.global.exception.CustomError.PASSWORD_ERROR;
+
 import com.sparta.outsourcing.domain.member.model.Member;
 import com.sparta.outsourcing.domain.member.model.MemberRole;
 import com.sparta.outsourcing.domain.member.model.entity.History;
@@ -8,8 +12,8 @@ import com.sparta.outsourcing.domain.member.repository.history.HistoryJpaReposit
 import com.sparta.outsourcing.domain.member.service.dto.MemberSignupDto;
 import com.sparta.outsourcing.domain.member.service.dto.UpdateDto;
 import com.sparta.outsourcing.domain.member.service.dto.UpdatePasswordDto;
+import com.sparta.outsourcing.global.exception.CustomException;
 import jakarta.annotation.PostConstruct;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,11 +53,10 @@ public class MemberRepositoryImpl implements MemberRepository {
   @Override
   public void updateMember(UpdateDto dto, Long memberId) {
     MemberEntity memberEntity = memberJpaRepository.findById(memberId).orElseThrow(
-        () -> new EntityNotFoundException("해당 유저의 정보가 존재하지 않습니다.")
-    );
+        () -> new CustomException(MEMBER_NOT_EXISTS));
 
     if (!passwordEncoder.matches(dto.getPassword(), memberEntity.getPassword())) {
-      throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+      throw new CustomException(PASSWORD_ERROR);
     }
 
     memberEntity.updateMember(dto);
@@ -62,11 +65,11 @@ public class MemberRepositoryImpl implements MemberRepository {
   @Override
   public void updatePasswordMember(UpdatePasswordDto dto, Long memberId) {
     MemberEntity memberEntity = memberJpaRepository.findById(memberId).orElseThrow(
-        () -> new EntityNotFoundException("해당 유저의 정보가 존재하지 않습니다.")
+        () -> new CustomException(MEMBER_NOT_EXISTS)
     );
 
     if (!passwordEncoder.matches(dto.getCurrentPassword(), memberEntity.getPassword())) {
-      throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+      throw new CustomException(PASSWORD_ERROR);
     }
 
     List<History> passwordHistoryEntityList = historyJpaRepository.findTop3ByMemberIdOrderByCreatedDateDesc(
@@ -74,15 +77,14 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     passwordHistoryEntityList.forEach(
         passwordHistoryEntity -> {
-          if(passwordEncoder.matches(dto.getChangePassword(), passwordHistoryEntity.getPassword())) {
-            throw new IllegalArgumentException("최근에 해당 비밀번호로 변경한 적이 있습니다.");
+          if (passwordEncoder.matches(dto.getChangePassword(),
+              passwordHistoryEntity.getPassword())) {
+            throw new CustomException(CURRENT_PASSWORD_ERROR);
           }
         }
     );
 
-    // 비밀번호 변경
     memberEntity.updatePassword(passwordEncoder.encode(dto.getChangePassword()));
-    // history에 변경된 비밀번호 저장
     History history = History.of(memberId, passwordEncoder.encode(dto.getChangePassword()));
     historyJpaRepository.save(history);
   }
@@ -90,8 +92,7 @@ public class MemberRepositoryImpl implements MemberRepository {
   @Override
   public void deleteMember(Long memberId) {
     MemberEntity memberEntity = memberJpaRepository.findById(memberId).orElseThrow(
-        () -> new EntityNotFoundException("해당 유저의 정보가 존재하지 않습니다.")
-    );
+        () -> new CustomException(MEMBER_NOT_EXISTS));
 
     memberJpaRepository.delete(memberEntity);
   }
@@ -104,14 +105,14 @@ public class MemberRepositoryImpl implements MemberRepository {
   @Override
   public Member findMemberOrElseThrow(String email) {
     return memberJpaRepository.findByEmail(email).orElseThrow(
-        () -> new EntityNotFoundException("해당 유저가 존재하지 않습니다.")
+        () -> new CustomException(MEMBER_NOT_EXISTS)
     ).toModel();
   }
 
   @Override
   public Member findMemberOrElseThrow(Long memberId) {
     return memberJpaRepository.findById(memberId).orElseThrow(
-        () -> new EntityNotFoundException("해당 유저가 존재하지 않습니다.")
+        () -> new CustomException(MEMBER_NOT_EXISTS)
     ).toModel();
   }
 }
