@@ -1,6 +1,7 @@
 package com.sparta.outsourcing.domain.member.controller;
 
 import com.sparta.outsourcing.domain.member.controller.dto.SignupRequestDto;
+import com.sparta.outsourcing.domain.member.controller.dto.UpdatePasswordRequestDto;
 import com.sparta.outsourcing.domain.member.controller.dto.UpdateRequestDto;
 import com.sparta.outsourcing.domain.member.service.MemberService;
 import com.sparta.outsourcing.domain.member.service.dto.MemberInfoResponse;
@@ -13,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -59,6 +61,16 @@ public class MemberController {
   ) {
     memberService.updateMember(memberId, userDetails.getUsername(), dto);
     return CommonResponseDto.ok("회원의 정보를 수정하였습니다.", null);
+  }
+
+  @PatchMapping("/{memberId}")
+  public ResponseEntity<CommonResponseDto<Void>> updatePasswordMember(
+      @PathVariable("memberId") Long memberId,
+      @AuthenticationPrincipal UserDetails userDetails,
+      @Validated @RequestBody UpdatePasswordRequestDto dto
+  ) {
+    memberService.updatePasswordMember(memberId, userDetails.getUsername(), dto);
+    return CommonResponseDto.ok("비밀번호를 수정하였습니다.", null);
   }
 
   @DeleteMapping("/{memberId}")

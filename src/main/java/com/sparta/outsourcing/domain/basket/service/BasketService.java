@@ -5,7 +5,7 @@ import com.sparta.outsourcing.domain.basket.repository.BasketRepository;
 import com.sparta.outsourcing.domain.basket.service.dto.BasketRequestDto;
 import com.sparta.outsourcing.domain.basket.service.dto.BasketResponseDto;
 import com.sparta.outsourcing.domain.member.model.Member;
-import com.sparta.outsourcing.domain.member.repository.MemberRepository;
+import com.sparta.outsourcing.domain.member.repository.member.MemberRepository;
 import com.sparta.outsourcing.domain.menu.repository.MenuRepository;
 import com.sparta.outsourcing.domain.restaurant.repository.RestaurantsRepository;
 import jakarta.persistence.EntityNotFoundException;

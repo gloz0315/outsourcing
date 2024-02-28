@@ -1,8 +1,8 @@
 package com.sparta.outsourcing.domain.favorite.controller;
 
-import com.sparta.outsourcing.domain.favorite.service.FavoriteService;
 import com.sparta.outsourcing.domain.favorite.model.dto.FavoriteRequestDto;
 import com.sparta.outsourcing.domain.favorite.model.dto.FavoriteResponseDto;
+import com.sparta.outsourcing.domain.favorite.service.FavoriteService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
