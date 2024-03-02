@@ -1,5 +1,8 @@
 package com.sparta.outsourcing.global.jwt.repository;
 
+import static com.sparta.outsourcing.global.exception.CustomError.NOT_EXIST_TOKEN;
+
+import com.sparta.outsourcing.global.exception.CustomException;
 import com.sparta.outsourcing.global.jwt.entity.RefreshTokenEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -18,7 +21,9 @@ public class TokenRepositoryImpl implements TokenRepository {
 
   @Override
   public RefreshTokenEntity findByMemberId(Long memberId) {
-    return refreshTokenJpaRepository.findByMemberId(memberId);
+    return refreshTokenJpaRepository.findByMemberId(memberId).orElseThrow(
+        () -> new CustomException(NOT_EXIST_TOKEN)
+    );
   }
 
   @Override
