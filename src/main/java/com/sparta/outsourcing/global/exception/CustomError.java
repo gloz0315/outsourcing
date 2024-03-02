@@ -41,7 +41,10 @@ public enum CustomError {
   NOT_EXIST_PAYMENT("결제 정보가 존재하지 않습니다."),
 
   // JWT 토큰 에러
-  EXPIRED_TOKEN("모든 토큰이 만료되었습니다.")
+  EXPIRED_TOKEN("모든 토큰이 만료되었습니다."),
+
+  // 토큰 오류
+  NOT_EXIST_TOKEN("존재하지 않은 토큰입니다.")
 
 
   ;
