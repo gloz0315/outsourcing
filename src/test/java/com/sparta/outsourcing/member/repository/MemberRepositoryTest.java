@@ -58,7 +58,7 @@ public class MemberRepositoryTest {
 
   @Nested
   @DisplayName("회원 가입 테스트")
-  class signupTest {
+  class SignupTest {
 
     @Test
     @DisplayName("회원 가입 성공")
@@ -88,7 +88,7 @@ public class MemberRepositoryTest {
 
   @Nested
   @DisplayName("회원 수정 테스트")
-  class updateTest {
+  class UpdateTest {
 
     @Test
     @DisplayName("회원 수정 성공")
@@ -152,7 +152,7 @@ public class MemberRepositoryTest {
 
   @Nested
   @DisplayName("비밀번호 수정 테스트")
-  class updatePasswordTest {
+  class UpdatePasswordTest {
 
     @Test
     @DisplayName("비밀번호 수정 성공")
@@ -204,7 +204,7 @@ public class MemberRepositoryTest {
 
   @Nested
   @DisplayName("회원 삭제 테스트")
-  class deleteTest {
+  class DeleteTest {
 
     @Test
     @Order(1)
@@ -230,7 +230,7 @@ public class MemberRepositoryTest {
 
   @Nested
   @DisplayName("회원 이메일 체크")
-  class checkEmail {
+  class CheckEmail {
 
     @Test
     @DisplayName("회원 이메일 체크 성공")
