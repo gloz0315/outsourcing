@@ -3,7 +3,6 @@ package com.sparta.outsourcing.member.repository;
 import com.sparta.outsourcing.domain.member.controller.dto.UpdatePasswordRequestDto;
 import com.sparta.outsourcing.domain.member.controller.dto.UpdateRequestDto;
 import com.sparta.outsourcing.domain.member.model.Member;
-import com.sparta.outsourcing.domain.member.model.entity.History;
 import com.sparta.outsourcing.domain.member.model.entity.MemberEntity;
 import com.sparta.outsourcing.domain.member.repository.history.HistoryJpaRepository;
 import com.sparta.outsourcing.domain.member.repository.member.MemberJpaRepository;
@@ -11,9 +10,6 @@ import com.sparta.outsourcing.domain.member.repository.member.MemberRepositoryIm
 import com.sparta.outsourcing.domain.member.service.dto.MemberSignupDto;
 import com.sparta.outsourcing.domain.member.service.dto.UpdateDto;
 import com.sparta.outsourcing.domain.member.service.dto.UpdatePasswordDto;
-import com.sparta.outsourcing.global.exception.CustomException;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,8 +34,8 @@ public class MemberRepositoryTest {
   private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
   private MemberRepositoryImpl memberRepository;
-  private Long memberId = 0L;
-  private Long historyId = 0L;
+  private static Long memberId = 0L;
+  private static Long historyId = 0L;
 
   @BeforeEach
   void setUp() {
@@ -49,6 +45,7 @@ public class MemberRepositoryTest {
     MemberEntity member = MemberEntity.of("test123@naver.com", "테스트",
         passwordEncoder.encode("Sk123456"), "테스트주소", "010-0000-0000");
     memberJpaRepository.saveAndFlush(member);
+    memberId++;
   }
 
   @AfterEach
@@ -60,7 +57,6 @@ public class MemberRepositoryTest {
   @Test
   @DisplayName("회원 가입 성공")
   void 회원가입() {
-    printInfo();
     // given
     MemberSignupDto dto = MemberSignupDto.builder()
         .email("test1234@naver.com")
@@ -69,6 +65,7 @@ public class MemberRepositoryTest {
         .address("회원가입테스트주소")
         .number("010-0000-0000")
         .build();
+    memberId++;
 
     // when
     memberRepository.signIn(dto);
@@ -85,7 +82,6 @@ public class MemberRepositoryTest {
   @Test
   @DisplayName("회원 수정")
   void 회원수정() {
-    printInfo();
     // given
     UpdateRequestDto updateRequestDto = UpdateRequestDto.builder()
         .nickname("변경할 이름")
@@ -109,7 +105,6 @@ public class MemberRepositoryTest {
   @Test
   @DisplayName("비밀번호 수정")
   void 비밀번호_수정() {
-    printInfo();
     // given
     UpdatePasswordRequestDto dto = new UpdatePasswordRequestDto(
         "Change@1234", "Sk123456", "Sk123456"
@@ -124,13 +119,4 @@ public class MemberRepositoryTest {
     // then
     Assertions.assertTrue(passwordEncoder.matches(dto.getChangePassword(), member.getPassword()));
   }
-
-  private void printInfo() {
-    List<MemberEntity> memberEntityList = memberJpaRepository.findAll();
-    List<History> historyList = historyJpaRepository.findAll();
-
-    memberEntityList.forEach(memberEntity -> memberId = memberEntity.getId());
-    historyList.forEach(history -> historyId = history.getId());
-  }
-
 }
