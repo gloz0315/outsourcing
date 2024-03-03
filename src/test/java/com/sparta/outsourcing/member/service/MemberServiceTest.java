@@ -253,5 +253,18 @@ public class MemberServiceTest {
       verify(memberRepository, atLeastOnce()).updateMember(any(UpdateDto.class),
           eq(member.getId()));
     }
+
+    @Test
+    @DisplayName("회원 정보 수정 실패 허가되지 않은 유저")
+    void 회원_정보_수정_실패_허가되지_않은_유저() {
+      // given
+      Member member = memberInit.init();
+
+      given(memberRepository.findMemberOrElseThrow(member.getEmail())).willReturn(member);
+
+      // when, then
+      Assertions.assertThrows(CustomException.class,
+          () -> memberService.updateMember(2L, member.getEmail(), any(UpdateRequestDto.class)));
+    }
   }
 }
