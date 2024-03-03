@@ -5,23 +5,33 @@ import static com.sparta.outsourcing.member.test.MemberInfo.TEST_EMAIL;
 import static com.sparta.outsourcing.member.test.MemberInfo.TEST_NAME;
 import static com.sparta.outsourcing.member.test.MemberInfo.TEST_NUMBER;
 import static com.sparta.outsourcing.member.test.MemberInfo.TEST_PASSWORD;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
+import com.sparta.outsourcing.domain.favorite.model.entity.Favorite;
 import com.sparta.outsourcing.domain.favorite.repository.FavoriteRepository;
 import com.sparta.outsourcing.domain.member.controller.dto.SignupRequestDto;
+import com.sparta.outsourcing.domain.member.controller.dto.UpdateRequestDto;
 import com.sparta.outsourcing.domain.member.model.Member;
 import com.sparta.outsourcing.domain.member.model.MemberRole;
 import com.sparta.outsourcing.domain.member.repository.member.MemberRepository;
 import com.sparta.outsourcing.domain.member.service.MemberService;
+import com.sparta.outsourcing.domain.member.service.dto.MemberInfoResponse;
 import com.sparta.outsourcing.domain.member.service.dto.MemberResponseDto;
+import com.sparta.outsourcing.domain.member.service.dto.UpdateDto;
+import com.sparta.outsourcing.domain.review.model.entity.Review;
 import com.sparta.outsourcing.domain.review.repository.ReviewRepository;
 import com.sparta.outsourcing.global.exception.CustomException;
 import com.sparta.outsourcing.global.jwt.entity.RefreshTokenEntity;
 import com.sparta.outsourcing.global.jwt.repository.TokenRepository;
 import com.sparta.outsourcing.global.security.UserDetailsImpl;
+import com.sparta.outsourcing.member.memberInit.MemberInit;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -49,6 +59,8 @@ public class MemberServiceTest {
 
   @InjectMocks
   private MemberService memberService;
+
+  private final MemberInit memberInit = new MemberInit();
 
   @Nested
   @DisplayName("회원 성공 테스트")
@@ -181,7 +193,65 @@ public class MemberServiceTest {
     @Test
     @DisplayName("회원 정보 조회 성공")
     void 회원정보_조회_성공() {
+      // given
+      Member member = memberInit.init();
+      List<Favorite> favoriteList = List.of(new Favorite(1L, member.getId(), 1L, LocalDate.now()));
+      List<Review> reviewList = List.of(
+          new Review(1L, "테스트내용", 3, LocalDateTime.now(), LocalDateTime.now(), null, member.getId(),
+              1L, 1L));
 
+      given(memberRepository.findMemberOrElseThrow(member.getId())).willReturn(member);
+      given(favoriteRepository.findAllByMemberId(member.getId())).willReturn(favoriteList);
+      given(reviewRepository.findByMemberEntityId(member.getId())).willReturn(reviewList);
+
+      // when
+      MemberInfoResponse result = memberService.memberInfo(member.getId());
+
+      // then
+      Assertions.assertEquals(result.getMemberId(), member.getId());
+      Assertions.assertEquals(result.getFavoriteList().get(0).getCreatedDate(),
+          favoriteList.get(0).getCreatedDate());
+      Assertions.assertEquals(result.getReviewList().get(0).getContents(),
+          reviewList.get(0).getContents());
+    }
+
+    @Test
+    @DisplayName("회원 정보 조회 실패 존재하지 않은 유저")
+    void 회원_정보_조회_실패_존재하지않은_유저() {
+      // given
+      given(memberRepository.findMemberOrElseThrow(1L)).willThrow(CustomException.class);
+
+      // when, then
+      Assertions.assertThrows(CustomException.class,
+          () -> memberService.memberInfo(1L));
+    }
+  }
+
+  @Nested
+  @DisplayName("회원 정보 수정 테스트")
+  class UpdateMemberTest {
+
+    @Test
+    @DisplayName("회원 정보 수정 성공")
+    void 회원_정보_수정_성공() {
+      // given
+      Member member = memberInit.init();
+      UpdateRequestDto dto = UpdateRequestDto.builder()
+          .nickname("변경할이름")
+          .address("변경할주소")
+          .number("010-1234-1234")
+          .password(member.getPassword())
+          .build();
+
+      given(memberRepository.findMemberOrElseThrow(member.getEmail())).willReturn(member);
+
+      // when
+      memberService.updateMember(member.getId(), member.getEmail(), dto);
+
+      // then
+      verify(memberRepository, atLeastOnce()).findMemberOrElseThrow(member.getEmail());
+      verify(memberRepository, atLeastOnce()).updateMember(any(UpdateDto.class),
+          eq(member.getId()));
     }
   }
 }
