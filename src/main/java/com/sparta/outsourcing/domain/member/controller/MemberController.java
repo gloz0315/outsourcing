@@ -1,6 +1,11 @@
 package com.sparta.outsourcing.domain.member.controller;
 
-import static com.sparta.outsourcing.global.success.SuccessCode.*;
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_DELETE_MEMBER;
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_LOGOUT;
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_SEARCH;
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_SIGNUP;
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_UPDATE_MEMBER;
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_UPDATE_MEMBER_PASSWORD;
 
 import com.sparta.outsourcing.domain.member.controller.dto.SignupRequestDto;
 import com.sparta.outsourcing.domain.member.controller.dto.UpdatePasswordRequestDto;

@@ -14,14 +14,16 @@ import static org.mockito.Mockito.verify;
 import com.sparta.outsourcing.domain.favorite.model.entity.Favorite;
 import com.sparta.outsourcing.domain.favorite.repository.FavoriteRepository;
 import com.sparta.outsourcing.domain.member.controller.dto.SignupRequestDto;
+import com.sparta.outsourcing.domain.member.controller.dto.UpdatePasswordRequestDto;
 import com.sparta.outsourcing.domain.member.controller.dto.UpdateRequestDto;
 import com.sparta.outsourcing.domain.member.model.Member;
 import com.sparta.outsourcing.domain.member.model.MemberRole;
 import com.sparta.outsourcing.domain.member.repository.member.MemberRepository;
-import com.sparta.outsourcing.domain.member.service.MemberService;
+import com.sparta.outsourcing.domain.member.service.MemberServiceImpl;
 import com.sparta.outsourcing.domain.member.service.dto.MemberInfoResponse;
 import com.sparta.outsourcing.domain.member.service.dto.MemberResponseDto;
 import com.sparta.outsourcing.domain.member.service.dto.UpdateDto;
+import com.sparta.outsourcing.domain.member.service.dto.UpdatePasswordDto;
 import com.sparta.outsourcing.domain.review.model.entity.Review;
 import com.sparta.outsourcing.domain.review.repository.ReviewRepository;
 import com.sparta.outsourcing.global.exception.CustomException;
@@ -58,7 +60,7 @@ public class MemberServiceTest {
   private FavoriteRepository favoriteRepository;
 
   @InjectMocks
-  private MemberService memberService;
+  private MemberServiceImpl memberService;
 
   private final MemberInit memberInit = new MemberInit();
 
@@ -265,6 +267,56 @@ public class MemberServiceTest {
       // when, then
       Assertions.assertThrows(CustomException.class,
           () -> memberService.updateMember(2L, member.getEmail(), any(UpdateRequestDto.class)));
+    }
+  }
+
+  @Nested
+  @DisplayName("회원 비밀번호 수정 테스트")
+  class UpdateMemberPasswordTest {
+
+    @Test
+    @DisplayName("회원 비밀번호 수정 성공")
+    void 회원_비밀번호_수정_성공() {
+      // given
+      Member member = memberInit.init();
+      UpdatePasswordRequestDto dto = new UpdatePasswordRequestDto(
+          "Sk@123456", "Test@12345", "Test@12345");
+
+      given(memberRepository.findMemberOrElseThrow(member.getEmail())).willReturn(member);
+
+      // when
+      memberService.updatePasswordMember(member.getId(), member.getEmail(), dto);
+
+      // then
+      verify(memberRepository, atLeastOnce()).updatePasswordMember(any(UpdatePasswordDto.class), eq(member.getId()));
+    }
+
+    @Test
+    @DisplayName("회원 비밀번호 수정 실패 존재하지 않은 유저")
+    void 회원_비밀번호_수정_실패_존재하지않은_유저() {
+      // given
+      Member member = memberInit.init();
+      UpdatePasswordRequestDto dto = new UpdatePasswordRequestDto(
+          "Sk@123456", "Test@12345", "Test@12345");
+
+      given(memberRepository.findMemberOrElseThrow(member.getEmail())).willThrow(CustomException.class);
+
+      // when, then
+      Assertions.assertThrows(CustomException.class,
+          () -> memberService.updatePasswordMember(member.getId(), member.getEmail(), dto));
+    }
+
+    @Test
+    @DisplayName("회원 비밀번호 수정 실패 맞지 않은 비밀번호")
+    void 회원_비밀번호_수정_실패_맞지않은_비밀번호() {
+      // given
+      UpdatePasswordRequestDto dto = new UpdatePasswordRequestDto(
+          "Sk@123456", "Test@12345", "Test@12333");
+
+      UpdatePasswordDto updatePasswordDto = new UpdatePasswordDto(dto);
+
+      // when, then
+      Assertions.assertThrows(CustomException.class, updatePasswordDto::checkChangePasswordEquals);
     }
   }
 }
