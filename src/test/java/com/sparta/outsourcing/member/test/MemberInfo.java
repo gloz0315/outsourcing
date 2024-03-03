@@ -1,6 +1,7 @@
 package com.sparta.outsourcing.member.test;
 
 public class MemberInfo {
+  public static final Long TEST_ID = 1L;
   public static final String TEST_EMAIL = "test123@naver.com";
   public static final String TEST_NAME = "Test12";
   public static final String TEST_PASSWORD = "Sk@123456";
