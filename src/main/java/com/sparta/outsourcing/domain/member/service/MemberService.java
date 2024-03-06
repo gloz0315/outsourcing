@@ -13,11 +13,14 @@ public interface MemberService {
 
   void logout(UserDetails userDetails);
 
+  // 유저의 정보를 조회
   MemberInfoResponse memberInfo(Long memberId);
 
+  // 유저의 정보를 수정 -> (비밀번호는 제외)
   void updateMember(Long memberId, String email, UpdateRequestDto dto);
 
-  void deleteMember(Long memberId, String username);
-
+  // 유저의 정보를 수정 -> 비밀번호 수정
   void updatePasswordMember(Long memberId, String email, UpdatePasswordRequestDto dto);
+
+  void deleteMember(Long memberId, String username);
 }
