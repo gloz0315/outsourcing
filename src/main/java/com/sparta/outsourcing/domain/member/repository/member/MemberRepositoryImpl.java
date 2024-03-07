@@ -72,8 +72,7 @@ public class MemberRepositoryImpl implements MemberRepository {
       throw new CustomException(PASSWORD_ERROR);
     }
 
-    List<History> passwordHistoryEntityList = historyJpaRepository.findTop3ByMemberIdOrderByCreatedDateDesc(
-        memberId);
+    List<History> passwordHistoryEntityList = historyJpaRepository.findTop3Member(memberId);
 
     passwordHistoryEntityList.forEach(
         passwordHistoryEntity -> {
