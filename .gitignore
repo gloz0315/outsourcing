@@ -39,4 +39,5 @@ out/
 ### application ###
 /**/src/main/resources/application.properties
 /**/src/test/resources/application-test.yml
+/**/src/main/generated
 
