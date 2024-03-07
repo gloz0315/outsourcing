@@ -10,6 +10,7 @@ import com.sparta.outsourcing.domain.member.repository.member.MemberRepositoryIm
 import com.sparta.outsourcing.domain.member.service.dto.MemberSignupDto;
 import com.sparta.outsourcing.domain.member.service.dto.UpdateDto;
 import com.sparta.outsourcing.domain.member.service.dto.UpdatePasswordDto;
+import com.sparta.outsourcing.global.config.QueryDSLConfig;
 import com.sparta.outsourcing.global.exception.CustomException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -20,12 +21,14 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
 @ActiveProfiles("test")
+@Import(QueryDSLConfig.class)
 public class MemberRepositoryTest {
 
   @Autowired
