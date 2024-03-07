@@ -4,7 +4,7 @@ import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_CANCEL;
 import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_ORDER;
 import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_SEARCH_ORDER;
 
-import com.sparta.outsourcing.domain.order.service.OrderService;
+import com.sparta.outsourcing.domain.order.service.OrderServiceImpl;
 import com.sparta.outsourcing.domain.order.service.dto.OrderInfoResponse;
 import com.sparta.outsourcing.domain.order.service.dto.OrderResponseDto;
 import com.sparta.outsourcing.global.dto.CommonResponseDto;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/orderDetails")
 public class OrderController {
 
-  private final OrderService orderService;
+  private final OrderServiceImpl orderService;
 
   @GetMapping("/{orderId}")
   public ResponseEntity<CommonResponseDto<OrderInfoResponse>> orderInfo(
