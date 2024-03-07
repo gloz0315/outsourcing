@@ -1,10 +1,13 @@
 package com.sparta.outsourcing.domain.menu.controller;
 
-import static com.sparta.outsourcing.global.success.SuccessCode.*;
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_CREATE_MENU;
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_DELETE_MENU;
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_SEARCH_MENU;
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_UPDATE_MENU;
 
 import com.sparta.outsourcing.domain.menu.controller.dto.MenuRequestDto;
 import com.sparta.outsourcing.domain.menu.controller.dto.MenuUpdateRequestDto;
-import com.sparta.outsourcing.domain.menu.service.MenuService;
+import com.sparta.outsourcing.domain.menu.service.MenuServiceImpl;
 import com.sparta.outsourcing.domain.menu.service.dto.MenuResponseDto;
 import com.sparta.outsourcing.global.dto.CommonResponseDto;
 import jakarta.validation.Valid;
@@ -28,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/menus")
 public class MenuController {
 
-  private final MenuService menuService;
+  private final MenuServiceImpl menuService;
 
   @PostMapping
   public ResponseEntity<CommonResponseDto<MenuResponseDto>> createMenu(
