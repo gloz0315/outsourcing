@@ -1,4 +1,4 @@
-package com.sparta.outsourcing.domain.member.repository.history.queryDSL;
+package com.sparta.outsourcing.domain.member.repository.history.querydsl;
 
 import com.sparta.outsourcing.domain.member.model.entity.History;
 import java.util.List;
