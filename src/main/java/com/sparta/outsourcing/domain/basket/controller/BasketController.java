@@ -1,8 +1,10 @@
 package com.sparta.outsourcing.domain.basket.controller;
 
-import static com.sparta.outsourcing.global.success.SuccessCode.*;
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_CONTAIN;
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_DELETE_BASKET;
+import static com.sparta.outsourcing.global.success.SuccessCode.SUCCESS_SEARCH_BASKET;
 
-import com.sparta.outsourcing.domain.basket.service.BasketService;
+import com.sparta.outsourcing.domain.basket.service.BasketServiceImpl;
 import com.sparta.outsourcing.domain.basket.service.dto.BasketRequestDto;
 import com.sparta.outsourcing.domain.basket.service.dto.BasketResponseDto;
 import com.sparta.outsourcing.global.dto.CommonResponseDto;
@@ -23,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class BasketController {
 
-  private final BasketService basketService;
+  private final BasketServiceImpl basketService;
 
   @PostMapping
   public ResponseEntity<CommonResponseDto<BasketResponseDto>> inputBasket(
