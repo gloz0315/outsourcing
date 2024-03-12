@@ -6,6 +6,8 @@ import static com.sparta.outsourcing.member.test.MemberInfo.TEST_NAME;
 import static com.sparta.outsourcing.member.test.MemberInfo.TEST_NUMBER;
 import static com.sparta.outsourcing.member.test.MemberInfo.TEST_PASSWORD;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.atLeastOnce;
@@ -79,7 +81,7 @@ public class MemberServiceTest {
       ReflectionTestUtils.setField(dto, "address", TEST_ADDRESS);
       ReflectionTestUtils.setField(dto, "number", TEST_NUMBER);
 
-      given(memberRepository.checkEmail(dto.getEmail())).willReturn(false);
+      given(memberRepository.checkEmail(anyString())).willReturn(false);
 
       // when
       MemberResponseDto result = memberService.signup(dto);
@@ -100,7 +102,7 @@ public class MemberServiceTest {
       ReflectionTestUtils.setField(dto, "address", TEST_ADDRESS);
       ReflectionTestUtils.setField(dto, "number", TEST_NUMBER);
 
-      given(memberRepository.checkEmail(dto.getEmail())).willReturn(true);
+      given(memberRepository.checkEmail(anyString())).willReturn(true);
 
       // when, then
       Assertions.assertThrows(CustomException.class,
@@ -129,8 +131,8 @@ public class MemberServiceTest {
       UserDetailsImpl userDetails = new UserDetailsImpl(member);
       RefreshTokenEntity refreshToken = RefreshTokenEntity.of(member.getId(), "testToken");
 
-      given(memberRepository.findMemberOrElseThrow(userDetails.getUsername())).willReturn(member);
-      given(tokenRepository.findByMemberId(member.getId())).willReturn(refreshToken);
+      given(memberRepository.findMemberOrElseThrow(anyString())).willReturn(member);
+      given(tokenRepository.findByMemberId(anyLong())).willReturn(refreshToken);
 
       // when
       memberService.logout(userDetails);
@@ -156,7 +158,7 @@ public class MemberServiceTest {
           .build();
 
       UserDetailsImpl userDetails = new UserDetailsImpl(member);
-      given(memberRepository.findMemberOrElseThrow(userDetails.getUsername())).willThrow(
+      given(memberRepository.findMemberOrElseThrow(anyString())).willThrow(
           CustomException.class);
 
       // when, then
@@ -179,8 +181,8 @@ public class MemberServiceTest {
           .build();
 
       UserDetailsImpl userDetails = new UserDetailsImpl(member);
-      given(memberRepository.findMemberOrElseThrow(userDetails.getUsername())).willReturn(member);
-      given(tokenRepository.findByMemberId(member.getId())).willThrow(CustomException.class);
+      given(memberRepository.findMemberOrElseThrow(anyString())).willReturn(member);
+      given(tokenRepository.findByMemberId(anyLong())).willThrow(CustomException.class);
 
       // when, then
       Assertions.assertThrows(CustomException.class,
@@ -202,9 +204,9 @@ public class MemberServiceTest {
           new Review(1L, "테스트내용", 3, LocalDateTime.now(), LocalDateTime.now(), null, member.getId(),
               1L, 1L));
 
-      given(memberRepository.findMemberOrElseThrow(member.getId())).willReturn(member);
-      given(favoriteRepository.findAllByMemberId(member.getId())).willReturn(favoriteList);
-      given(reviewRepository.findByMemberEntityId(member.getId())).willReturn(reviewList);
+      given(memberRepository.findMemberOrElseThrow(anyLong())).willReturn(member);
+      given(favoriteRepository.findAllByMemberId(anyLong())).willReturn(favoriteList);
+      given(reviewRepository.findByMemberEntityId(anyLong())).willReturn(reviewList);
 
       // when
       MemberInfoResponse result = memberService.memberInfo(member.getId());
@@ -221,11 +223,11 @@ public class MemberServiceTest {
     @DisplayName("회원 정보 조회 실패 존재하지 않은 유저")
     void 회원_정보_조회_실패_존재하지않은_유저() {
       // given
-      given(memberRepository.findMemberOrElseThrow(1L)).willThrow(CustomException.class);
+      given(memberRepository.findMemberOrElseThrow(anyLong())).willThrow(CustomException.class);
 
       // when, then
       Assertions.assertThrows(CustomException.class,
-          () -> memberService.memberInfo(1L));
+          () -> memberService.memberInfo(anyLong()));
     }
   }
 
@@ -245,7 +247,7 @@ public class MemberServiceTest {
           .password(member.getPassword())
           .build();
 
-      given(memberRepository.findMemberOrElseThrow(member.getEmail())).willReturn(member);
+      given(memberRepository.findMemberOrElseThrow(anyString())).willReturn(member);
 
       // when
       memberService.updateMember(member.getId(), member.getEmail(), dto);
@@ -262,7 +264,7 @@ public class MemberServiceTest {
       // given
       Member member = memberInit.init();
 
-      given(memberRepository.findMemberOrElseThrow(member.getEmail())).willReturn(member);
+      given(memberRepository.findMemberOrElseThrow(anyString())).willReturn(member);
 
       // when, then
       Assertions.assertThrows(CustomException.class,
@@ -282,13 +284,14 @@ public class MemberServiceTest {
       UpdatePasswordRequestDto dto = new UpdatePasswordRequestDto(
           "Sk@123456", "Test@12345", "Test@12345");
 
-      given(memberRepository.findMemberOrElseThrow(member.getEmail())).willReturn(member);
+      given(memberRepository.findMemberOrElseThrow(anyString())).willReturn(member);
 
       // when
       memberService.updatePasswordMember(member.getId(), member.getEmail(), dto);
 
       // then
-      verify(memberRepository, atLeastOnce()).updatePasswordMember(any(UpdatePasswordDto.class), eq(member.getId()));
+      verify(memberRepository, atLeastOnce()).updatePasswordMember(any(UpdatePasswordDto.class),
+          eq(member.getId()));
     }
 
     @Test
@@ -299,7 +302,8 @@ public class MemberServiceTest {
       UpdatePasswordRequestDto dto = new UpdatePasswordRequestDto(
           "Sk@123456", "Test@12345", "Test@12345");
 
-      given(memberRepository.findMemberOrElseThrow(member.getEmail())).willThrow(CustomException.class);
+      given(memberRepository.findMemberOrElseThrow(anyString())).willThrow(
+          CustomException.class);
 
       // when, then
       Assertions.assertThrows(CustomException.class,
