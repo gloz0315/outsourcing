@@ -10,6 +10,7 @@ import com.sparta.outsourcing.domain.member.repository.member.MemberRepositoryIm
 import com.sparta.outsourcing.domain.member.service.dto.MemberSignupDto;
 import com.sparta.outsourcing.domain.member.service.dto.UpdateDto;
 import com.sparta.outsourcing.domain.member.service.dto.UpdatePasswordDto;
+import com.sparta.outsourcing.global.config.PasswordConfig;
 import com.sparta.outsourcing.global.config.QueryDSLConfig;
 import com.sparta.outsourcing.global.exception.CustomException;
 import org.junit.jupiter.api.AfterEach;
@@ -22,13 +23,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
 @ActiveProfiles("test")
-@Import(QueryDSLConfig.class)
+@Import({QueryDSLConfig.class, PasswordConfig.class})
 public class MemberRepositoryTest {
 
   @Autowired
@@ -37,9 +37,11 @@ public class MemberRepositoryTest {
   @Autowired
   private HistoryJpaRepository historyJpaRepository;
 
-  private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
   private MemberRepositoryImpl memberRepository;
+
   private static Long memberId = 0L;
 
   @BeforeEach
@@ -59,6 +61,17 @@ public class MemberRepositoryTest {
     historyJpaRepository.deleteAll();
   }
 
+  @Test
+  @DisplayName("회원 조회 테스트 실패_이름조회")
+  void 회원조회_테스트_실패_이름조회() {
+    // given
+    String email = "badTest123@naver.com";
+
+    // when, then
+    Assertions.assertThrows(CustomException.class,
+        () -> memberRepository.findMemberOrElseThrow(email), "해당 유저가 존재하지 않습니다.");
+  }
+
   @Nested
   @DisplayName("회원 가입 테스트")
   class SignupTest {
@@ -67,12 +80,8 @@ public class MemberRepositoryTest {
     @DisplayName("회원 가입 성공")
     void 회원가입_성공() {
       // given
-      MemberSignupDto dto = MemberSignupDto.builder()
-          .email("test1234@naver.com")
-          .password("Sk123456")
-          .nickname("회원가입테스트")
-          .address("회원가입테스트주소")
-          .number("010-0000-0000")
+      MemberSignupDto dto = MemberSignupDto.builder().email("test1234@naver.com")
+          .password("Sk123456").nickname("회원가입테스트").address("회원가입테스트주소").number("010-0000-0000")
           .build();
       memberId++;
 
@@ -97,12 +106,8 @@ public class MemberRepositoryTest {
     @DisplayName("회원 수정 성공")
     void 회원수정_성공() {
       // given
-      UpdateRequestDto updateRequestDto = UpdateRequestDto.builder()
-          .nickname("변경할 이름")
-          .address("변경할 테스트 주소")
-          .number("010-1234-1234")
-          .password("Sk123456")
-          .build();
+      UpdateRequestDto updateRequestDto = UpdateRequestDto.builder().nickname("변경할 이름")
+          .address("변경할 테스트 주소").number("010-1234-1234").password("Sk123456").build();
 
       UpdateDto dto = new UpdateDto(updateRequestDto);
 
@@ -120,12 +125,8 @@ public class MemberRepositoryTest {
     @DisplayName("회원 수정 실패 틀린 비밀번호")
     void 회원수정_실패_틀린_비밀번호() {
       // given
-      UpdateRequestDto updateRequestDto = UpdateRequestDto.builder()
-          .nickname("변경할 이름")
-          .address("변경할 테스트 주소")
-          .number("010-1234-1234")
-          .password("Sk1234567")
-          .build();
+      UpdateRequestDto updateRequestDto = UpdateRequestDto.builder().nickname("변경할 이름")
+          .address("변경할 테스트 주소").number("010-1234-1234").password("Sk1234567").build();
 
       UpdateDto dto = new UpdateDto(updateRequestDto);
 
@@ -138,18 +139,13 @@ public class MemberRepositoryTest {
     @DisplayName("회원 수정 실패 존재하지 않은 유저")
     void 회원수정_실패_존재하지않은_유저() {
       // given
-      UpdateRequestDto updateRequestDto = UpdateRequestDto.builder()
-          .nickname("변경할 이름")
-          .address("변경할 테스트 주소")
-          .number("010-1234-1234")
-          .password("Sk1234567")
-          .build();
+      UpdateRequestDto updateRequestDto = UpdateRequestDto.builder().nickname("변경할 이름")
+          .address("변경할 테스트 주소").number("010-1234-1234").password("Sk1234567").build();
 
       UpdateDto dto = new UpdateDto(updateRequestDto);
 
       // when, then
-      Assertions.assertThrows(CustomException.class,
-          () -> memberRepository.updateMember(dto, 0L));
+      Assertions.assertThrows(CustomException.class, () -> memberRepository.updateMember(dto, 0L));
     }
   }
 
@@ -161,9 +157,8 @@ public class MemberRepositoryTest {
     @DisplayName("비밀번호 수정 성공")
     void 비밀번호_수정() {
       // given
-      UpdatePasswordRequestDto dto = new UpdatePasswordRequestDto(
-          "Change@1234", "Sk123456", "Sk123456"
-      );
+      UpdatePasswordRequestDto dto = new UpdatePasswordRequestDto("Change@1234", "Sk123456",
+          "Sk123456");
 
       UpdatePasswordDto updatePasswordDto = new UpdatePasswordDto(dto);
 
@@ -179,9 +174,8 @@ public class MemberRepositoryTest {
     @DisplayName("비밀번호 수정 실패 존재하지 않은 유저")
     void 비밀번호_수정_실패_존재하지않은_유저() {
       // given
-      UpdatePasswordRequestDto dto = new UpdatePasswordRequestDto(
-          "Change@1234", "Sk123456", "Sk123456"
-      );
+      UpdatePasswordRequestDto dto = new UpdatePasswordRequestDto("Change@1234", "Sk123456",
+          "Sk123456");
 
       UpdatePasswordDto updatePasswordDto = new UpdatePasswordDto(dto);
 
@@ -194,9 +188,8 @@ public class MemberRepositoryTest {
     @DisplayName("비밀번호 수정 불일치 비밀번호 확인")
     void 비밀번호_수정_실패_불일치_비밀번호() {
       // given
-      UpdatePasswordRequestDto dto = new UpdatePasswordRequestDto(
-          "Change@1234", "Sk123456", "S123123"
-      );
+      UpdatePasswordRequestDto dto = new UpdatePasswordRequestDto("Change@1234", "Sk123456",
+          "S123123");
 
       UpdatePasswordDto updatePasswordDto = new UpdatePasswordDto(dto);
 
@@ -226,8 +219,7 @@ public class MemberRepositoryTest {
     @DisplayName("회원 삭제 실패")
     void 회원_삭제_실패_존재하지않은_유저() {
       // when, then
-      Assertions.assertThrows(CustomException.class,
-          () -> memberRepository.deleteMember(0L));
+      Assertions.assertThrows(CustomException.class, () -> memberRepository.deleteMember(0L));
     }
   }
 
