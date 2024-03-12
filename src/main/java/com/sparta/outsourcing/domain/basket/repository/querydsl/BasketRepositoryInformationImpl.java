@@ -7,7 +7,6 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.outsourcing.domain.basket.model.Basket;
 import com.sparta.outsourcing.domain.basket.model.entity.BasketEntity;
-import com.sparta.outsourcing.domain.basket.model.entity.QBasketEntity;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,19 +22,19 @@ public class BasketRepositoryInformationImpl implements BasketRepositoryInformat
 
   @Override
   public List<BasketEntity> findBasketEntityByMemberId(Long memberId) {
-    QBasketEntity basket = basketEntity;
 
-    return jpaQueryFactory.selectFrom(basket)
-        .where(basket.memberId.eq(memberId))
+    return jpaQueryFactory.select(basketEntity)
+        .from(basketEntity)
+        .where(basketEntity.memberId.eq(memberId))
         .fetch();
   }
 
   @Override
   public BasketEntity findFirstByMemberIdAndMenuId(Long memberId, Long menuId) {
-    QBasketEntity basket = basketEntity;
 
-    return jpaQueryFactory.selectFrom(basket)
-        .where(basket.memberId.eq(memberId), basket.menuId.eq(menuId))
+    return jpaQueryFactory.select(basketEntity)
+        .from(basketEntity)
+        .where(basketEntity.memberId.eq(memberId), basketEntity.menuId.eq(menuId))
         .fetchOne();
   }
 
