@@ -13,6 +13,9 @@ import com.sparta.outsourcing.domain.restaurant.repository.RestaurantsRepository
 import com.sparta.outsourcing.global.exception.CustomException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class BasketServiceImpl {
+public class BasketServiceImpl implements BasketService {
 
   private final BasketRepository basketRepository;
   private final MemberRepository memberRepository;
@@ -69,6 +72,23 @@ public class BasketServiceImpl {
             .count(basket.getCount())
             .build()
     ).toList();
+  }
+
+  @Transactional(readOnly = true)
+  @Override
+  public Page<BasketResponseDto> getBasketInfo(UserDetails userDetails, int page, int size) {
+    Member member = memberRepository.findMemberOrElseThrow(userDetails.getUsername());
+
+    Pageable pageable = PageRequest.of(page - 1, size);
+
+    Page<Basket> basketList = basketRepository.findAll(member.getId(), pageable);
+
+    return basketList.map(basket -> BasketResponseDto.builder()
+        .memberId(basket.getMemberId())
+        .menuId(basket.getMenuId())
+        .restaurantId(basket.getRestaurantId())
+        .count(basket.getCount())
+        .build());
   }
 
   public void deleteBasket(String email) {

@@ -4,6 +4,8 @@ import com.sparta.outsourcing.domain.basket.model.Basket;
 import com.sparta.outsourcing.domain.basket.model.entity.BasketEntity;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -39,5 +41,11 @@ public class BasketRepositoryImpl implements BasketRepository {
     List<BasketEntity> basketInfo = basketJpaRepository.findBasketEntityByMemberId(memberId);
 
     return basketInfo.stream().map(BasketEntity::toModel).toList();
+  }
+
+  @Override
+  public Page<Basket> findAll(Long memberId, Pageable pageable) {
+
+    return basketJpaRepository.findAll(memberId, pageable);
   }
 }
