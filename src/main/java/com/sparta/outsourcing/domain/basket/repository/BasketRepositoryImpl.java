@@ -48,4 +48,12 @@ public class BasketRepositoryImpl implements BasketRepository {
 
     return basketJpaRepository.findAll(memberId, pageable);
   }
+
+  @Override
+  public List<Basket> findAllJpa(Long memberId, Pageable pageable) {
+
+    return basketJpaRepository.findAllByMemberId(memberId, pageable).stream()
+        .map(BasketEntity::toModel)
+        .toList();
+  }
 }

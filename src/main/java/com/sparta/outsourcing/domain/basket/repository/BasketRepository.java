@@ -14,4 +14,6 @@ public interface BasketRepository {
   List<Basket> basketInfo(Long memberId);
 
   Page<Basket> findAll(Long memberId, Pageable pageable);
+
+  List<Basket> findAllJpa(Long memberId, Pageable pageable);
 }

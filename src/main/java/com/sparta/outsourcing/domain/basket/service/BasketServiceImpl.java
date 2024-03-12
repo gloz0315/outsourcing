@@ -91,6 +91,25 @@ public class BasketServiceImpl implements BasketService {
         .build());
   }
 
+  @Transactional(readOnly = true)
+  @Override
+  public List<BasketResponseDto> getBasketInfoJpa(UserDetails userDetails, int page, int size) {
+    Member member = memberRepository.findMemberOrElseThrow(userDetails.getUsername());
+
+    Pageable pageable = PageRequest.of(page - 1, size);
+
+    List<Basket> basketList = basketRepository.findAllJpa(member.getId(), pageable);
+
+    return basketList.stream().map(
+            basket -> BasketResponseDto.builder()
+                .memberId(basket.getMemberId())
+                .menuId(basket.getMenuId())
+                .restaurantId(basket.getRestaurantId())
+                .count(basket.getCount())
+                .build())
+        .toList();
+  }
+
   public void deleteBasket(String email) {
     Member member = memberRepository.findMemberOrElseThrow(email);
     basketRepository.deleteBasket(member.getId());

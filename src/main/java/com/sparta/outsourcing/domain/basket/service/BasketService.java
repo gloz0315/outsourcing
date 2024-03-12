@@ -16,6 +16,8 @@ public interface BasketService {
 
   Page<BasketResponseDto> getBasketInfo(UserDetails userDetails, int page, int size);
 
+  List<BasketResponseDto> getBasketInfoJpa(UserDetails userDetails, int page, int size);
+
   // 장바구니 삭제
   void deleteBasket(String email);
 }

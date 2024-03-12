@@ -55,6 +55,16 @@ public class BasketController {
     return CommonResponseDto.ok(SUCCESS_SEARCH_BASKET, responseDtoPage);
   }
 
+  @GetMapping("/jpa")
+  public ResponseEntity<CommonResponseDto<List<BasketResponseDto>>> getBasketInfoJpa(
+      @AuthenticationPrincipal UserDetails userDetails,
+      @RequestParam("page") int page, @RequestParam("size") int size
+  ) {
+    List<BasketResponseDto> responseDtoPage = basketService.getBasketInfoJpa(userDetails, page,
+        size);
+    return CommonResponseDto.ok(SUCCESS_SEARCH_BASKET, responseDtoPage);
+  }
+
   @DeleteMapping
   public ResponseEntity<CommonResponseDto<Void>> deleteBasket(
       @AuthenticationPrincipal UserDetails userDetails
