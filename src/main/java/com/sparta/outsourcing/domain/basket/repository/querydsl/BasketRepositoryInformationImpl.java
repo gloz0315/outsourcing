@@ -2,9 +2,7 @@ package com.sparta.outsourcing.domain.basket.repository.querydsl;
 
 import static com.sparta.outsourcing.domain.basket.model.entity.QBasketEntity.basketEntity;
 
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.outsourcing.domain.basket.model.Basket;
@@ -33,13 +31,10 @@ public class BasketRepositoryInformationImpl implements BasketRepositoryInformat
 
   @Override
   public BasketEntity findFirstByMemberIdAndMenuId(Long memberId, Long menuId) {
-    BooleanBuilder bb = new BooleanBuilder();
-
-    bb.and(memberIdEq(memberId)).and(menuIdEq(menuId));
 
     return jpaQueryFactory.select(basketEntity)
         .from(basketEntity)
-        .where(bb)
+        .where(menuIdEq(menuId), memberIdEq(memberId))
         .fetchOne();
   }
 
@@ -53,9 +48,10 @@ public class BasketRepositoryInformationImpl implements BasketRepositoryInformat
 
     List<Basket> baskets = query.fetch().stream().map(BasketEntity::toModel).toList();
 
-    long totalSize = jpaQueryFactory.select(Wildcard.count)
+    long totalSize = jpaQueryFactory.select(basketEntity.count)
         .from(basketEntity)
-        .fetch().get(0);
+        .where(memberIdEq(memberId))
+        .fetchFirst();
 
     return PageableExecutionUtils.getPage(baskets, pageable, () -> totalSize);
   }
