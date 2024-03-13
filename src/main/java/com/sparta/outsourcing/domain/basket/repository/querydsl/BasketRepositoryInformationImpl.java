@@ -48,12 +48,11 @@ public class BasketRepositoryInformationImpl implements BasketRepositoryInformat
 
     List<Basket> baskets = query.fetch().stream().map(BasketEntity::toModel).toList();
 
-    long totalSize = jpaQueryFactory.select(basketEntity.count)
+    JPAQuery<Long> count = jpaQueryFactory.select(basketEntity.count())
         .from(basketEntity)
-        .where(memberIdEq(memberId))
-        .fetchFirst();
+        .where(memberIdEq(memberId));
 
-    return PageableExecutionUtils.getPage(baskets, pageable, () -> totalSize);
+    return PageableExecutionUtils.getPage(baskets, pageable, count::fetchOne);
   }
 
   private BooleanExpression memberIdEq(Long memberId) {
