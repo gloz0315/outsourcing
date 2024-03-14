@@ -1,10 +1,6 @@
 package com.sparta.outsourcing.member.service;
 
-import static com.sparta.outsourcing.member.test.MemberInfo.TEST_ADDRESS;
 import static com.sparta.outsourcing.member.test.MemberInfo.TEST_EMAIL;
-import static com.sparta.outsourcing.member.test.MemberInfo.TEST_NAME;
-import static com.sparta.outsourcing.member.test.MemberInfo.TEST_NUMBER;
-import static com.sparta.outsourcing.member.test.MemberInfo.TEST_PASSWORD;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -19,7 +15,6 @@ import com.sparta.outsourcing.domain.member.controller.dto.SignupRequestDto;
 import com.sparta.outsourcing.domain.member.controller.dto.UpdatePasswordRequestDto;
 import com.sparta.outsourcing.domain.member.controller.dto.UpdateRequestDto;
 import com.sparta.outsourcing.domain.member.model.Member;
-import com.sparta.outsourcing.domain.member.model.MemberRole;
 import com.sparta.outsourcing.domain.member.repository.member.MemberRepository;
 import com.sparta.outsourcing.domain.member.service.MemberServiceImpl;
 import com.sparta.outsourcing.domain.member.service.dto.MemberInfoResponse;
@@ -32,7 +27,7 @@ import com.sparta.outsourcing.global.exception.CustomException;
 import com.sparta.outsourcing.global.jwt.entity.RefreshTokenEntity;
 import com.sparta.outsourcing.global.jwt.repository.TokenRepository;
 import com.sparta.outsourcing.global.security.UserDetailsImpl;
-import com.sparta.outsourcing.member.memberInit.MemberInit;
+import com.sparta.outsourcing.member.test.MemberTest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,7 +42,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
-public class MemberServiceTest {
+public class MemberServiceTest implements MemberTest {
 
   @Mock
   private MemberRepository memberRepository;
@@ -63,8 +58,6 @@ public class MemberServiceTest {
 
   @InjectMocks
   private MemberServiceImpl memberService;
-
-  private final MemberInit memberInit = new MemberInit();
 
   @Nested
   @DisplayName("회원 성공 테스트")
@@ -118,15 +111,7 @@ public class MemberServiceTest {
     @DisplayName("로그아웃 성공")
     void 로그아웃_성공() {
       // given
-      Member member = Member.builder()
-          .id(1L)
-          .email(TEST_EMAIL)
-          .password(TEST_PASSWORD)
-          .nickname(TEST_NAME)
-          .address(TEST_ADDRESS)
-          .number(TEST_NUMBER)
-          .role(MemberRole.USER)
-          .build();
+      Member member = TEST_MEMBER;
 
       UserDetailsImpl userDetails = new UserDetailsImpl(member);
       RefreshTokenEntity refreshToken = RefreshTokenEntity.of(member.getId(), "testToken");
@@ -147,17 +132,7 @@ public class MemberServiceTest {
     @DisplayName("로그아웃 실패 존재하지 않은 유저")
     void 로그아웃_실패_존재하지않은_유저() {
       // given
-      Member member = Member.builder()
-          .id(1L)
-          .email(TEST_EMAIL)
-          .password(TEST_PASSWORD)
-          .nickname(TEST_NAME)
-          .address(TEST_ADDRESS)
-          .number(TEST_NUMBER)
-          .role(MemberRole.USER)
-          .build();
-
-      UserDetailsImpl userDetails = new UserDetailsImpl(member);
+      UserDetailsImpl userDetails = new UserDetailsImpl(TEST_MEMBER);
       given(memberRepository.findMemberOrElseThrow(anyString())).willThrow(
           CustomException.class);
 
@@ -170,15 +145,7 @@ public class MemberServiceTest {
     @DisplayName("로그아웃 실패 존재하지 않은 토큰")
     void 로그아웃_실패_존재하지않은_토큰() {
       // given
-      Member member = Member.builder()
-          .id(1L)
-          .email(TEST_EMAIL)
-          .password(TEST_PASSWORD)
-          .nickname(TEST_NAME)
-          .address(TEST_ADDRESS)
-          .number(TEST_NUMBER)
-          .role(MemberRole.USER)
-          .build();
+      Member member = TEST_MEMBER;
 
       UserDetailsImpl userDetails = new UserDetailsImpl(member);
       given(memberRepository.findMemberOrElseThrow(anyString())).willReturn(member);
@@ -198,7 +165,7 @@ public class MemberServiceTest {
     @DisplayName("회원 정보 조회 성공")
     void 회원정보_조회_성공() {
       // given
-      Member member = memberInit.init();
+      Member member = TEST_MEMBER;
       List<Favorite> favoriteList = List.of(new Favorite(1L, member.getId(), 1L, LocalDate.now()));
       List<Review> reviewList = List.of(
           new Review(1L, "테스트내용", 3, LocalDateTime.now(), LocalDateTime.now(), null, member.getId(),
@@ -239,7 +206,8 @@ public class MemberServiceTest {
     @DisplayName("회원 정보 수정 성공")
     void 회원_정보_수정_성공() {
       // given
-      Member member = memberInit.init();
+      Member member = TEST_MEMBER;
+
       UpdateRequestDto dto = UpdateRequestDto.builder()
           .nickname("변경할이름")
           .address("변경할주소")
@@ -262,7 +230,7 @@ public class MemberServiceTest {
     @DisplayName("회원 정보 수정 실패 허가되지 않은 유저")
     void 회원_정보_수정_실패_허가되지_않은_유저() {
       // given
-      Member member = memberInit.init();
+      Member member = TEST_MEMBER;
 
       given(memberRepository.findMemberOrElseThrow(anyString())).willReturn(member);
 
@@ -280,7 +248,8 @@ public class MemberServiceTest {
     @DisplayName("회원 비밀번호 수정 성공")
     void 회원_비밀번호_수정_성공() {
       // given
-      Member member = memberInit.init();
+      Member member = TEST_MEMBER;
+
       UpdatePasswordRequestDto dto = new UpdatePasswordRequestDto(
           "Sk@123456", "Test@12345", "Test@12345");
 
@@ -298,7 +267,8 @@ public class MemberServiceTest {
     @DisplayName("회원 비밀번호 수정 실패 존재하지 않은 유저")
     void 회원_비밀번호_수정_실패_존재하지않은_유저() {
       // given
-      Member member = memberInit.init();
+      Member member = TEST_MEMBER;
+
       UpdatePasswordRequestDto dto = new UpdatePasswordRequestDto(
           "Sk@123456", "Test@12345", "Test@12345");
 

@@ -2,7 +2,6 @@ package com.sparta.outsourcing.member.controller;
 
 import static com.sparta.outsourcing.member.test.MemberInfo.TEST_EMAIL;
 import static com.sparta.outsourcing.member.test.MemberInfo.TEST_ID;
-import static com.sparta.outsourcing.member.test.MemberInfo.TEST_PASSWORD;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -25,7 +24,7 @@ import com.sparta.outsourcing.domain.member.controller.dto.UpdateRequestDto;
 import com.sparta.outsourcing.domain.member.service.MemberService;
 import com.sparta.outsourcing.domain.member.service.dto.MemberInfoResponse;
 import com.sparta.outsourcing.global.security.UserDetailsImpl;
-import com.sparta.outsourcing.member.memberInit.MemberInit;
+import com.sparta.outsourcing.member.test.MemberTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,7 +43,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class MemberControllerTest {
+public class MemberControllerTest implements MemberTest {
 
   @Autowired
   WebApplicationContext context;
@@ -68,9 +67,7 @@ public class MemberControllerTest {
         .webAppContextSetup(context)
         .build();
 
-    MemberInit memberInit = new MemberInit();
-
-    testUserDetails = new UserDetailsImpl(memberInit.init());
+    testUserDetails = new UserDetailsImpl(TEST_MEMBER);
 
     SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
         testUserDetails, testUserDetails.getPassword(), testUserDetails.getAuthorities()));
