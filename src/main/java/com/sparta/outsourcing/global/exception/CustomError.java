@@ -20,6 +20,7 @@ public enum CustomError {
   // 장바구니에 대한 오류
   EMPTY_BASKET("장바구니가 비어있습니다."),
   NOT_CONTAIN_MENU("장바구니에 담을 수 없습니다. 한 가게에서만 담을 수 있습니다."),
+  EMPTY_PAGE("해당 페이지에 접근할 수 없습니다."),
 
   // 주문에 대한 오류
   NOT_CANCEL_ORDER("현재 배달중이므로 결제를 취소할 수 없습니다"),
@@ -44,10 +45,7 @@ public enum CustomError {
   EXPIRED_TOKEN("모든 토큰이 만료되었습니다."),
 
   // 토큰 오류
-  NOT_EXIST_TOKEN("존재하지 않은 토큰입니다.")
-
-
-  ;
+  NOT_EXIST_TOKEN("존재하지 않은 토큰입니다.");
 
   private final String message;
 

@@ -1,5 +1,6 @@
 package com.sparta.outsourcing.domain.basket.service;
 
+import static com.sparta.outsourcing.global.exception.CustomError.EMPTY_PAGE;
 import static com.sparta.outsourcing.global.exception.CustomError.RESTAURANT_NOT_EXIST;
 
 import com.sparta.outsourcing.domain.basket.model.Basket;
@@ -83,6 +84,10 @@ public class BasketServiceImpl implements BasketService {
 
     Page<Basket> basketList = basketRepository.findAll(member.getId(), pageable);
 
+    if (basketList.getContent().isEmpty()) {
+      throw new CustomException(EMPTY_PAGE);
+    }
+
     return basketList.map(basket -> BasketResponseDto.builder()
         .memberId(basket.getMemberId())
         .menuId(basket.getMenuId())
@@ -99,6 +104,10 @@ public class BasketServiceImpl implements BasketService {
     Pageable pageable = PageRequest.of(page - 1, size);
 
     List<Basket> basketList = basketRepository.findAllJpa(member.getId(), pageable);
+
+    if (basketList.isEmpty()) {
+      throw new CustomException(EMPTY_PAGE);
+    }
 
     return basketList.stream().map(
             basket -> BasketResponseDto.builder()
