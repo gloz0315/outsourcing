@@ -14,6 +14,8 @@
 
 - [x] Basket Repository 페이징 기능 구현
 
+- [x] **`AWS EC2 를 이용하여 파일 배포 실패`** (AWS에서 카드 등록 오류로 인해 실패 -> 문의글 남김)
+
 # 배달이오 - Delievery
 ---
 
